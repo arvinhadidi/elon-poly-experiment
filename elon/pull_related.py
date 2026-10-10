@@ -48,15 +48,16 @@ QUERIES = ["# of tweets", "truth social posts", "Trump posts", "MrBeast views", 
            "Khamenei posts", "NYC Mayor tweets", "Ted Cruz tweets", "CZ tweets"]
 
 SERIES_NAME_RE = re.compile(r"tweet|post|truth social|views|youtube|mrbeast|mention|# of|how many", re.I)
-COUNT_RE = re.compile(r"#|how many|view count|\bviews?\b|\btweets?\b|\bmentions?\b|highest daily|"
-                      r"what will \w+ (post|say)|truth social posts|\bposts\b", re.I)
+MEDIA_RE = re.compile(r"tweet|\bposts?\b|truth social|\bviews?\b|\bmentions?\b|\bsay\b|youtube|mrbeast|posted", re.I)
+# bare "posts" headlines (e.g. "Trump posts himself as Jesus") are not counts; require a count cue
+COUNT_TITLE_RE = re.compile(r"#|how many|tweets?\b|\bviews?\b|\bmentions?\b|\bsay\b|youtube|mrbeast", re.I)
 EXCL_RE = re.compile(r"how much|\$\d", re.I)
 
-TARGET_NAMES = ["Elon Musk", "Donald Trump", "Trump (@POTUS)", "POTUS", "White House", "Zelenskyy",
+TARGET_NAMES = ["Elon Musk", "Elon", "Donald Trump", "Trump (@POTUS)", "POTUS", "White House", "Zelenskyy",
                 "NYC Mayor", "CZ", "Khamenei", "Ted Cruz", "Andrew Tate", "MrBeast", "Powell",
                 "Morgan Wallen", "Drake", "Justin Bieber", "Ariana Grande", "Kanye", "Taylor Swift",
                 "Kamala", "Trump", "Putin", "Zelensky"]
-TARGET_TO_USER = {"Elon Musk": "elonmusk", "Donald Trump": "realDonaldTrump", "White House": "WhiteHouse",
+TARGET_TO_USER = {"Elon Musk": "elonmusk", "Elon": "elonmusk", "Donald Trump": "realDonaldTrump", "White House": "WhiteHouse",
                   "Zelenskyy": "ZelenskyyUa", "NYC Mayor": "NYCMayor", "CZ": "cz_binance",
                   "Khamenei": "khamenei_ir", "Ted Cruz": "tedcruz", "Andrew Tate": "Cobratate"}
 MONTHS = {m: i for i, m in enumerate(["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep",
@@ -83,7 +84,8 @@ def extract_target(title):
     for name in TARGET_NAMES:
         if name.lower() in low:
             return name
-    return (title or "")[:40]
+    m = re.search(r"will (?:the )?(.+?) (?:say|post|tweet)\b", title or "", re.I)
+    return m.group(1)[:40] if m else (title or "")[:40]
 
 
 def metric_of(title):
@@ -96,8 +98,10 @@ def metric_of(title):
         return "mentions"
     if "how many times" in t:
         return "count (how many times)"
-    if "tweet" in t or "post" in t or "#" in t:
+    if "tweet" in t or "post" in t:
         return "x posts"
+    if "how many" in t or "count" in t:
+        return "count (how many times)"
     return "other"
 
 
@@ -238,7 +242,7 @@ def discover():
         for e in r.get("events", []) or []:
             EV.setdefault(e["id"], e)
             hits += 1
-            if COUNT_RE.search(e.get("title") or ""):
+            if MEDIA_RE.search(e.get("title") or ""):
                 for s in e.get("series") or []:
                     cand.setdefault(str(s["id"]), "search")
     log(f"public-search hits: {hits}")
@@ -253,7 +257,7 @@ def discover():
         if not page:
             break
         for e in page:
-            if COUNT_RE.search(e.get("title") or ""):
+            if MEDIA_RE.search(e.get("title") or ""):
                 EV.setdefault(e["id"], e)
                 for s in e.get("series") or []:
                     cand.setdefault(str(s["id"]), "open_sweep")
@@ -269,7 +273,7 @@ def build_families(EV, cand):
         evs = series_events(sid)
         if not evs:
             continue
-        share = sum(1 for e in evs if COUNT_RE.search(e.get("title") or "")) / len(evs)
+        share = sum(1 for e in evs if MEDIA_RE.search(e.get("title") or "")) / len(evs)
         if share < 0.5:
             log(f"skip series {sid}: only {share:.0%} count-style titles")
             continue
@@ -280,16 +284,17 @@ def build_families(EV, cand):
         if e.get("series"):
             continue
         t = e.get("title") or ""
-        if COUNT_RE.search(t) and not EXCL_RE.search(t):
-            groups[norm_key(t)].append(e)
-    for k, evs in groups.items():
-        if len(evs) >= 2 or re.search(r"#|how many", evs[0].get("title") or "", re.I):
-            for i, e in enumerate(evs):
-                if not e.get("markets") and e.get("slug"):
-                    full = gamma_event_by_slug(e["slug"])
-                    if full:
-                        evs[i] = full
-            families[f"K:{k}"] = {"series_id": "", "events": evs, "src": "search/sweep"}
+        if COUNT_TITLE_RE.search(t) and not EXCL_RE.search(t):
+            groups[(extract_target(t), metric_of(t))].append(e)
+    for (tgt, met), evs in groups.items():
+        if len(evs) < 2:  # one-offs are not recurring families
+            continue
+        for i, e in enumerate(evs):
+            if not e.get("markets") and e.get("slug"):
+                full = gamma_event_by_slug(e["slug"])
+                if full:
+                    evs[i] = full
+        families[f"K:{tgt}|{met}"] = {"series_id": "", "events": evs, "src": "search/sweep"}
     return families
 
 
@@ -321,7 +326,7 @@ def bucket_width(titles):
     if not diffs:
         return ""
     w = statistics.median(diffs)
-    return f"{w:g}"
+    return str(int(w)) if float(w).is_integer() else f"{w:.4g}"
 
 
 def settlement_of(e):
@@ -381,7 +386,16 @@ def main():
     for key, fam in families.items():
         evs = fam["events"]
         targets = [extract_target(e.get("title")) for e in evs]
-        target = max(set(targets), key=targets.count) if targets else ""
+        cnt = defaultdict(int)
+        for t_ in targets:
+            cnt[t_] += 1
+        top = sorted(cnt.items(), key=lambda kv: -kv[1])
+        if not top:
+            target = ""
+        elif top[0][1] / len(targets) >= 0.6:
+            target = top[0][0]
+        else:  # multi-target family, e.g. "highest daily YouTube view count" across artists
+            target = "multiple: " + ", ".join(k for k, _ in top[:4])
         sid = fam["series_id"]
         metric = metric_of(evs[0].get("title")) if evs else ""
         series_slug = next(((e.get("seriesSlug") or "") for e in evs if e.get("seriesSlug")), "")
@@ -514,7 +528,7 @@ def main():
         f"Generated {NOW.strftime('%Y-%m-%d %H:%M UTC')} by elon/pull_related.py (read-only, no orders).",
         "",
         "## Polymarket method",
-        "- Families = Gamma series whose titles are count-style (>=50% of event titles match COUNT_RE), plus",
+        "- Families = Gamma series whose titles are count-style (>=50% of event titles match MEDIA_RE), plus",
         "  series-less events grouped by normalised title (only if >=2 hits or a '#'/'how many' title).",
         "- Series-less families come only from public-search (5 hits per query) and the open-event sweep, so",
         "  their history is incomplete.",
