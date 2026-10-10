@@ -49,14 +49,12 @@ def build(slug, g):
     hl = np.array([lam_h[h][(h // 3600) % 168] for h in hours])           # expected posts per hour slot
     ov = np.array([max(0, min(h + 3600, E) - max(h, S)) / 3600 for h in hours])
     cum = np.concatenate([[0], np.cumsum(hl * ov)])
-    mu = np.zeros(n)
+    mu = np.zeros(n); slots = (hours // 3600) % 168; later_h = {}
+    for m_, h in enumerate(hours):
+        later_h[h] = float((lam_h[h][slots[m_ + 1:]] * ov[m_ + 1:]).sum())
     for j, t in enumerate(grid):
-        h = t // 3600 * 3600; k = int((h - hours[0]) // 3600)
-        lam_now = lam_h[h]; rem_in_hr = (min(h + 3600, E) - t) / 3600
-        mu[j] = lam_now[(h // 3600) % 168] * rem_in_hr + (cum[-1] - cum[k + 1])
-        # later hours use the lam at the time of evaluation (hour start) for fidelity with backtest
-        later = sum(lam_now[(hh // 3600) % 168] * ov[m] for m, hh in enumerate(hours) if hh > h)
-        mu[j] = lam_now[(h // 3600) % 168] * rem_in_hr + later
+        h = t // 3600 * 3600; rem_in_hr = (min(h + 3600, E) - t) / 3600
+        mu[j] = lam_h[h][(h // 3600) % 168] * rem_in_hr + later_h[h]
     F = K + mu
     exp_hr = np.array([lam_h[t // 3600 * 3600][(t // 3600) % 168] for t in grid])
     # rolling 60-min import count (posts with importedAt in (t-3600, t])
