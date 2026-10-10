@@ -40,8 +40,6 @@ def paginate(url, params):
         if not page:
             break
         out.extend(page)
-        if len(page) < 100 and off > 0 and False:
-            break
         off += 100
     return out
 
@@ -53,11 +51,6 @@ def is_tweet_count_title(t):
 # ---------- 1. Discover series ----------
 series_info = {}   # id -> dict
 events_by_id = {}  # id -> event (dedupe)
-
-
-def add_events(evs, origin_series=None):
-    for e in evs:
-        events_by_id.setdefault(e["id"], e)
 
 
 def ensure_series(sid, source):
@@ -142,22 +135,9 @@ for e in list(search_hits.values()):
     else:
         orphans_skipped.append(slug)
 
-# also orphans from closed/live pagination of the old, series-less 2024 events, found via search
-# (the search pass above covers the closed 2024 "of-elon-musk-tweets-between-..." ones)
-
-# Series-less events from the paginated pulls are not expected; check any remaining series-less
-for e in events_by_id.values():
-    if not e.get("series") and e.get("slug") not in orphans_kept:
-        pass
-
-# Filter: keep only tweet-count events
-def keep_event(e):
-    if e.get("series"):
-        sids = {str(s["id"]) for s in e["series"]}
-        return bool(sids & set(series_info)) and is_tweet_count_title(e.get("title")) or bool(sids & {"10000", "10816", "10181"})
-    return True  # orphans already filtered above
-
-events = [e for e in events_by_id.values() if keep_event(e)]
+# Events reached through the series pulls are kept as-is (all are tweet-count markets).
+# Orphans were filtered above, so no further filtering is needed.
+events = list(events_by_id.values())
 print(f"events collected: {len(events)} (orphans kept: {len(orphans_kept)}, orphans skipped: {len(orphans_skipped)})")
 
 # ---------- 2. Exact windows from xtracker ----------
@@ -173,29 +153,113 @@ except Exception as ex:
     print("xtracker fetch failed:", ex)
 print("xtracker trackings:", len(xt_map))
 
-DESC_RE = re.compile(
-    r"from\s+([A-Za-z]+ \d{1,2})(?:,? (\d{4}))?\s+(\d{1,2}:\d{2}\s*[AP]M)\s*ET\s+to\s+([A-Za-z]+ \d{1,2}),?\s*(\d{4})?\s+(\d{1,2}:\d{2}\s*[AP]M)\s*ET",
+MONTHS = {m: i for i, m in enumerate(
+    ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
+MON = r"([A-Za-z]{3,9})"
+TIME = r"(\d{1,2}:\d{2}\s*[AP]M)"
+RANGE_RE = re.compile(
+    r"(?:from|between)\s+" + MON + r"\s+(\d{1,2})(?:st|nd|rd|th)?(?:,?\s*(\d{4}))?(?:,?\s*" + TIME + r"\s*ET)?"
+    r"\s+(?:to|and|-|\u2013)\s+" + MON + r"\s+(\d{1,2})(?:st|nd|rd|th)?(?:,?\s*(\d{4}))?(?:,?\s*" + TIME + r"\s*ET)?",
     re.I)
+SINGLE_DAY_RE = re.compile(r"\bon\s+" + MON + r"\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})\s*\(?ET", re.I)
+MONTH_RE = re.compile(r"(?:month of|in)\s+" + MON + r"(?:\s+(\d{4}))?\s*\(?(?:ET)?", re.I)
 
 
-def parse_desc_window(desc):
-    m = DESC_RE.search(desc or "")
-    if not m:
-        return None
-    s_md, s_year, s_t, e_md, e_year, e_t = m.groups()
-    e_year = e_year or s_year
-    if not e_year:
-        return None
-    s_year = s_year or e_year
+def _mon(name):
+    m = MONTHS.get(name[:3].lower())
+    if m is None or name.lower()[:3] not in MONTHS:
+        raise ValueError(name)
+    return m
 
-    def mk(md, yr, tm):
-        dt = datetime.strptime(f"{md} {yr} {tm.upper().replace(' ', '')}", "%B %d %Y %I:%M%p")
-        return dt.replace(tzinfo=ET).astimezone(UTC)
 
+def _et(y, mo, d, tm=None):
+    hh, mm = 0, 0
+    if tm:
+        t = datetime.strptime(tm.upper().replace(" ", ""), "%I:%M%p")
+        hh, mm = t.hour, t.minute
+    return datetime(y, mo, d, hh, mm, tzinfo=ET).astimezone(UTC)
+
+
+def parse_desc_window(desc, end_hint=None):
+    """Return (start_utc, end_utc, rule) parsed from description text, or None."""
+    desc = desc or ""
+    hint_year = end_hint.year if end_hint else None
     try:
-        return mk(s_md, s_year, s_t), mk(e_md, e_year, e_t)
+        m = RANGE_RE.search(desc)
+        if m:
+            s_mon, s_day, s_yr, s_t, e_mon, e_day, e_yr, e_t = m.groups()
+            if e_yr is None and s_yr is None and hint_year is None:
+                return None
+            e_yr = int(e_yr) if e_yr else (int(s_yr) if s_yr else hint_year)
+            if s_yr:
+                s_yr = int(s_yr)
+            else:
+                # no year on the start date: a range crossing New Year starts in the prior year
+                s_yr = e_yr - 1 if _mon(s_mon) > _mon(e_mon) else e_yr
+            # xtracker/Polymarket weekly windows end at 12:00 PM ET when the text omits a time
+            s_t = s_t or "12:00 PM"
+            e_t = e_t or "12:00 PM"
+            return _et(s_yr, _mon(s_mon), int(s_day), s_t), _et(e_yr, _mon(e_mon), int(e_day), e_t), "range"
+        m = SINGLE_DAY_RE.search(desc)
+        if m:
+            mo, d, yr = m.group(1), int(m.group(2)), int(m.group(3))
+            return _et(yr, _mon(mo), d), _next_day(yr, _mon(mo), d), "single-day"
+        m = MONTH_RE.search(desc)
+        if m:
+            mo_name, yr = m.group(1), m.group(2)
+            mo = _mon(mo_name)
+            if yr:
+                yr = int(yr)
+            elif hint_year:
+                yr = hint_year if mo <= end_hint.month else hint_year - 1
+            else:
+                return None
+            nxt_y, nxt_m = (yr + 1, 1) if mo == 12 else (yr, mo + 1)
+            return _et(yr, mo, 1), _et(nxt_y, nxt_m, 1), "month"
     except ValueError:
         return None
+    return None
+
+
+def _next_day(y, mo, d):
+    from datetime import date, timedelta
+    nd = date(y, mo, d) + timedelta(days=1)
+    return _et(nd.year, nd.month, nd.day)
+
+
+TITLE_RANGE_RE = re.compile(
+    MON + r"\s+(\d{1,2})\s*(?:-|\u2013|to|and)\s*(?:" + MON + r"\s+)?(\d{1,2})(?!\d)", re.I)
+
+
+def parse_title_window(title, g_start, g_end):
+    """Date-level window from a title like 'Elon Musk # of tweets June 14-21?'.
+    The end instant is the Gamma endDate when present (its ET clock time is reused for the start)."""
+    if not title:
+        return None
+    anchor = g_end or g_start
+    if anchor is None:
+        return None
+    year = anchor.astimezone(ET).year
+    clock = (g_end or anchor).astimezone(ET)
+    for m in TITLE_RANGE_RE.finditer(title):
+        try:
+            s_mon = _mon(m.group(1))
+        except ValueError:
+            continue
+        s_day = int(m.group(2))
+        e_mon = _mon(m.group(3)) if m.group(3) else s_mon
+        e_day = int(m.group(4))
+        if not m.group(3) and e_day < s_day:
+            e_mon = s_mon + 1 if s_mon < 12 else 1
+        s_year = year if s_mon <= e_mon else year - 1
+        if g_end is not None:
+            end_utc = g_end
+        else:
+            end_utc = _et(year, e_mon, e_day, "12:00 PM")
+        # start at the same ET clock time as the end, on the start date
+        s_local = datetime(s_year, s_mon, s_day, clock.hour, clock.minute, tzinfo=ET).astimezone(UTC)
+        return s_local, end_utc
+    return None
 
 
 def iso(dt):
@@ -210,10 +274,10 @@ def parse_gamma_dt(s):
 
 def family_of(start, end):
     days = (end - start).total_seconds() / 86400
-    if days <= 3.0:
-        return "48h", days
-    if 0.5 <= days <= 1.5:
+    if days <= 1.5:
         return "daily", days
+    if days <= 3.5:
+        return "48h", days
     if 6.0 <= days <= 8.0:
         return "weekly", days
     if 26.0 <= days <= 32.0:
@@ -225,6 +289,8 @@ BUCKET_RE_RANGE = re.compile(r"^\s*(\d[\d,]*)\s*[-–]\s*(\d[\d,]*)\s*$")
 BUCKET_RE_PLUS = re.compile(r"^\s*(\d[\d,]*)\s*\+\s*$")
 BUCKET_RE_LT = re.compile(r"^\s*(?:<|less than|under)\s*(\d[\d,]*)\s*$", re.I)
 BUCKET_RE_GT = re.compile(r"^\s*(?:>|more than|over)\s*(\d[\d,]*)\s*$", re.I)
+BUCKET_RE_OR_MORE = re.compile(r"^\s*(\d[\d,]*)\s*(?:\+|or more|or higher|and above)\s*$", re.I)
+BUCKET_RE_OR_LESS = re.compile(r"^\s*(\d[\d,]*)\s*(?:or less|or fewer|or below)\s*$", re.I)
 
 
 def bucket_bounds(label, question=""):
@@ -236,9 +302,12 @@ def bucket_bounds(label, question=""):
         m = BUCKET_RE_RANGE.match(src)
         if m:
             return n(m.group(1)), n(m.group(2))
-        m = BUCKET_RE_PLUS.match(src)
+        m = BUCKET_RE_PLUS.match(src) or BUCKET_RE_OR_MORE.match(src)
         if m:
             return n(m.group(1)), 999999
+        m = BUCKET_RE_OR_LESS.match(src)
+        if m:
+            return 0, n(m.group(1))
         m = BUCKET_RE_LT.match(src)
         if m:
             return 0, n(m.group(1)) - 1
@@ -261,17 +330,25 @@ def bucket_bounds(label, question=""):
     return None, None
 
 
-def outcome_of(prices):
+def outcome_of(prices, closed):
+    """1 = YES won, 0 = NO won, None = not settled. Only closed markets settle.
+    Settled prices are exact (1/0) or within 0.01 of it (e.g. 0.9995/0.0005)."""
+    if not closed:
+        return None
     try:
         p = [float(x) for x in prices]
     except Exception:
         return None
-    if len(p) >= 2 and set(p[:2]) == {0.0, 1.0}:
-        return 1 if p[0] == 1.0 else 0
+    if len(p) < 2:
+        return None
+    if all(abs(x - round(x)) <= 0.01 for x in p[:2]) and round(p[0]) + round(p[1]) == 1:
+        if p[0] not in (0.0, 1.0):
+            anomalies.append(f"near-settled prices {prices}")
+        return int(round(p[0]))
     return None
 
 
-EVENT_ROWS, SUMMARY_ROWS, anomalies = [], [], []
+EVENT_ROWS, SUMMARY_ROWS, SUMMARY_ROWS_SRC, anomalies = [], [], [], []
 window_key_index = defaultdict(list)
 
 for e in sorted(events, key=lambda x: (x.get("startDate") or "", x.get("slug") or "")):
@@ -288,15 +365,28 @@ for e in sorted(events, key=lambda x: (x.get("startDate") or "", x.get("slug") o
         w_end = parse_gamma_dt(tracked["endDate"].replace(".000Z", "Z"))
         src = "tracking"
     else:
-        pw = parse_desc_window(e.get("description") or "")
+        g_end = parse_gamma_dt(e.get("endDate"))
+        pw = parse_desc_window(e.get("description") or "", g_end)
+        if pw and pw[2] == "range" and (pw[1] - pw[0]).days > 10:
+            # description text disagrees with the title for this range; trust the title
+            anomalies.append(f"description span {(pw[1] - pw[0]).days}d overridden by title: {slug}")
+            pw = None
         if pw:
-            w_start, w_end = pw
+            w_start, w_end, rule = pw
             src = "description"
+            if rule != "range":
+                src = f"description-{rule}"
         else:
-            w_start = parse_gamma_dt(e.get("startDate"))
-            w_end = parse_gamma_dt(e.get("endDate"))
-            src = "gamma_dates"
-            anomalies.append(f"window fallback to gamma dates: {slug}")
+            g_start = parse_gamma_dt(e.get("startDate"))
+            g_end = parse_gamma_dt(e.get("endDate"))
+            tw = parse_title_window(e.get("title"), g_start, g_end)
+            if tw:
+                w_start, w_end = tw
+                src = "title"
+            else:
+                w_start, w_end = g_start, g_end
+                src = "gamma_dates"
+            anomalies.append(f"window fallback to {src}: {slug} -> {iso(w_start) if w_start else None} .. {iso(w_end) if w_end else None}")
     if w_start is None or w_end is None:
         anomalies.append(f"NO WINDOW: {slug}")
         continue
@@ -315,12 +405,7 @@ for e in sorted(events, key=lambda x: (x.get("startDate") or "", x.get("slug") o
         tokens = parse_json_field(m.get("clobTokenIds")) or []
         if not isinstance(tokens, list):
             tokens = []
-        outcome = outcome_of(prices) if (m.get("closed") or e.get("closed")) else None
-        if outcome is None:
-            outcome = outcome_of(prices) if isinstance(prices, list) and prices else None
-        if outcome is not None and not (m.get("closed") or e.get("closed")):
-            # resolved prices on a not-yet-flagged market: still record
-            pass
+        outcome = outcome_of(prices, bool(m.get("closed") or e.get("closed")))
         row = {
             "event_id": e["id"],
             "event_slug": slug,
@@ -354,6 +439,7 @@ for e in sorted(events, key=lambda x: (x.get("startDate") or "", x.get("slug") o
     if n_w != 1:
         anomalies.append(f"n_winners={n_w}: {slug}")
     wl = summary_winners[0] if n_w == 1 else (" | ".join(w[0] for w in summary_winners), "", "")
+    SUMMARY_ROWS_SRC.append({"window_source": src})
     SUMMARY_ROWS.append({
         "event_slug": slug,
         "family": family,
@@ -425,19 +511,19 @@ for k, v in sorted(twins.items()):
     print(k, v)
 print("twin groups:", len(twins))
 
-print("\n== Bucket width pattern per family (hi-lo+1, bounded buckets only) ==")
+print("\n== Bucket width pattern per family (hi-lo+1, interior buckets only) ==")
 width = defaultdict(Counter)
 for r in EVENT_ROWS:
     if r["bucket_lo"] == "" or r["bucket_hi"] == "":
         continue
-    if r["bucket_hi"] == 999999 or r["bucket_lo"] == 0 and r["bucket_hi"] != 999999 and str(r["bucket_label"]).startswith("<"):
-        continue
+    if r["bucket_hi"] == 999999 or r["bucket_lo"] == 0:
+        continue  # open-ended "N+" and "<N" buckets have no true width
     width[r["family"]][int(r["bucket_hi"]) - int(r["bucket_lo"]) + 1] += 1
 for fam in sorted(width):
     print(fam, dict(width[fam].most_common(8)))
 
 print("\n== Window source counts ==")
-print(Counter(r["window_source"] for r in SUMMARY_ROWS))
+print(Counter(r["window_source"] for r in SUMMARY_ROWS_SRC))
 
 print("\n== Anomalies (%d) ==" % len(anomalies))
 for a in anomalies[:80]:

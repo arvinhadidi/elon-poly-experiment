@@ -1,0 +1,125 @@
+events collected: 375 (orphans kept: 16, orphans skipped: 7)
+xtracker trackings: 6
+
+== Series ==
+10000 elon-tweets | Elon Tweets | weekly {'closed=true': 185, 'closed=false': 3}
+10181 elon-tweet-daily | elon tweet daily | daily {'closed=true': 46, 'closed=false': 1}
+10816 elon-tweets-48h | Elon Tweets 48H | daily {'closed=true': 121, 'closed=false': 3}
+orphans included: 16 ['of-elon-musk-tweets-between-january-10-16', 'of-elon-musk-tweets-between-may-3-and-may-10', 'of-elon-musk-tweets-between-may-10-and-may-17', 'of-elon-musk-tweets-between-may-17-and-may-24', 'of-elon-musk-tweets-between-may-24-and-may-31', 'elon-musk-number-of-tweets-25-times-thursday', 'how-many-times-will-elon-musk-tweet-between-april-26-and-may-3', 'elon-musk-of-tweets-january-3-10-continued', 'elon-musk-of-tweets-nov-22-29', 'elon-musk-of-tweets-nov-8-15', 'elon-musk-of-tweets-in-september', 'elon-musk-of-tweets-nov-15-22', 'elon-musk-of-tweets-january-10-17-25-strikes', 'elon-musk-of-tweets-august-23-30', 'elon-musk-of-tweets-january-24-31-lower-options', 'elon-musk-of-tweets-july-26-aug-2']
+orphans excluded: 7
+
+== Events by family x closed ==
+('48h', 'false') 3
+('48h', 'true') 121
+('daily', 'true') 36
+('monthly', 'false') 1
+('monthly', 'true') 12
+('other', 'true') 1
+('weekly', 'false') 3
+('weekly', 'true') 198
+total events: 375 | total bucket rows: 6286
+
+== Date range per family (window_start min, window_end max) ==
+48h 2026-01-01T17:00:00Z -> 2026-10-14T15:59:59Z
+daily 2025-07-24T04:00:00Z -> 2026-03-11T16:00:00Z
+monthly 2025-09-01T04:00:00Z -> 2026-11-01T03:59:59Z
+other 2024-01-11T00:00:00Z -> 2024-01-16T00:00:00Z
+weekly 2024-04-26T12:00:00Z -> 2026-10-20T15:59:59Z
+
+== n_winners != 1 ==
+elon-musk-number-of-tweets-25-times-7-31 0 true 
+elon-musk-number-of-tweets-25-times-7-29 0 true 
+will-elon-musk-number-of-tweets-be-higher-on-august-13-than-day-before 0 true 
+will-elon-musk-number-of-tweets-be-higher-on-august-15-than-day-before 0 true 
+will-elon-musk-number-of-tweets-be-higher-on-august-17-than-day-before 0 true 
+will-elon-musk-number-of-tweets-be-higher-on-august-19-than-day-before 0 true 
+will-elon-musk-number-of-tweets-be-higher-on-august-22-than-day-before 0 true 
+elon-musk-of-tweets-october-2026 0 false 
+elon-musk-of-tweets-october-6-october-13-2026 0 false 
+elon-musk-of-tweets-october-8-october-10-2026 0 false 
+elon-musk-of-tweets-october-9-october-16-2026 0 false 
+elon-musk-of-tweets-october-10-october-12-2026 0 false 
+elon-musk-of-tweets-october-13-october-20-2026 0 false 
+elon-musk-of-tweets-october-12-october-14-2026 0 false 
+count: 14
+
+== Twin windows (identical start+end) ==
+('2025-01-03T17:00:00Z', '2025-01-10T17:00:00Z') ['elon-musk-of-tweets-january-3-january-10', 'elon-musk-of-tweets-january-3-10-continued']
+('2025-01-10T17:00:00Z', '2025-01-17T17:00:00Z') ['elon-musk-of-tweets-january-10-17', 'elon-musk-of-tweets-january-10-17-25-strikes']
+('2025-01-24T17:00:00Z', '2025-01-31T17:00:00Z') ['elon-musk-of-tweets-january-24-31', 'elon-musk-of-tweets-january-24-31-lower-options']
+('2025-01-31T17:00:00Z', '2025-02-07T17:00:00Z') ['elon-musk-of-tweets-jan-31-feb-7', 'elon-musk-of-tweets-jan-31-feb-7-higher-options']
+('2025-02-07T17:00:00Z', '2025-02-14T17:00:00Z') ['elon-musk-of-tweets-feb-7-14', 'elon-musk-of-tweets-feb-7-14-higher-options']
+('2025-03-14T16:00:00Z', '2025-03-21T16:00:00Z') ['elon-musk-of-tweets-mar-14-21', 'elon-musk-of-tweets-mar-14-21-lower-brackets']
+('2025-04-04T16:00:00Z', '2025-04-11T16:00:00Z') ['elon-musk-of-tweets-april-4-11', 'elon-musk-of-tweets-april-4-11-lower-brackets']
+('2025-05-30T16:00:00Z', '2025-06-06T16:00:00Z') ['elon-musk-of-tweets-may-30-june-6', 'elon-musk-of-tweets-may-30-june-6-higher-brackets-137']
+('2025-06-20T16:00:00Z', '2025-06-27T16:00:00Z') ['elon-musk-of-tweets-june-20-27', 'elon-musk-of-tweets-june-27-july-4']
+('2025-07-18T16:00:00Z', '2025-07-25T16:00:00Z') ['elon-musk-of-tweets-july-18-25', 'elon-musk-of-tweets-july-25-august-1']
+('2025-08-01T16:00:00Z', '2025-08-08T16:00:00Z') ['elon-musk-of-tweets-august-1-8', 'elon-musk-of-tweets-august-1-8-higher-brackets', 'elon-musk-of-tweets-august-8-15']
+('2025-08-09T00:00:00Z', '2025-08-15T16:00:00Z') ['elon-musk-of-tweets-august-8-15-brackets-of-30', 'elon-musk-of-tweets-august-8-15-higher-brackets']
+('2025-08-15T16:00:00Z', '2025-08-22T16:00:00Z') ['elon-musk-of-tweets-august-15-22', 'elon-musk-of-tweets-august-15-22-lower-brackets']
+('2025-08-29T16:00:00Z', '2025-09-05T16:00:00Z') ['elon-musk-of-tweets-august-29-september-5', 'elon-musk-of-tweets-august-29-september-5-629']
+('2026-05-18T16:00:00Z', '2026-05-20T16:00:00Z') ['arch-elon-musk-of-tweets-may-18-may-20', 'elon-musk-of-tweets-may-18-may-20']
+('2026-05-19T16:00:00Z', '2026-05-26T16:00:00Z') ['arch-elon-musk-of-tweets-may-19-may-26', 'elon-musk-of-tweets-may-19-may-26']
+('2026-08-20T16:00:00Z', '2026-08-22T16:00:00Z') ['elon-musk-of-tweets-august-20-august-22', 'elon-musk-of-tweets-august-20-august-22-2026']
+twin groups: 17
+
+== Bucket width pattern per family (hi-lo+1, interior buckets only) ==
+48h {25: 968, 10: 30}
+daily {10: 70}
+monthly {20: 340, 40: 220, 50: 22, 80: 10}
+other {75: 4, 66: 1}
+weekly {20: 3060, 25: 432, 15: 207, 10: 114, 50: 50, 30: 30}
+
+== Window source counts ==
+Counter({'description': 301, 'description-single-day': 34, 'title': 22, 'description-month': 12, 'tracking': 6})
+
+== Anomalies (49) ==
+ - window fallback to title: of-elon-musk-tweets-between-january-10-16 -> 2024-01-11T00:00:00Z .. 2024-01-16T00:00:00Z
+ - window fallback to title: how-many-times-will-elon-musk-tweet-between-april-26-and-may-3 -> 2024-04-26T12:00:00Z .. 2024-05-03T12:00:00Z
+ - window fallback to title: of-elon-musk-tweets-between-may-3-and-may-10 -> 2024-05-03T12:00:00Z .. 2024-05-10T12:00:00Z
+ - window fallback to title: of-elon-musk-tweets-between-may-10-and-may-17 -> 2024-05-10T12:00:00Z .. 2024-05-17T12:00:00Z
+ - window fallback to title: of-elon-musk-tweets-between-may-17-and-may-24 -> 2024-05-17T12:00:00Z .. 2024-05-24T12:00:00Z
+ - window fallback to title: of-elon-musk-tweets-between-may-24-and-may-31 -> 2024-05-24T12:00:00Z .. 2024-05-31T12:00:00Z
+ - window fallback to title: of-elon-musk-tweets-between-may-31-and-june-7 -> 2024-05-31T12:00:00Z .. 2024-06-07T12:00:00Z
+ - window fallback to title: of-elon-musk-tweets-june-7-14 -> 2024-06-07T12:00:00Z .. 2024-06-14T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-june-14-21 -> 2024-06-14T12:00:00Z .. 2024-06-21T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-june-21-28 -> 2024-06-21T12:00:00Z .. 2024-06-28T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-june-28-july-5 -> 2024-06-28T12:00:00Z .. 2024-07-05T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-july-5-july-12 -> 2024-07-05T12:00:00Z .. 2024-07-12T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-july-12-july-19 -> 2024-07-12T12:00:00Z .. 2024-07-19T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-july-19-26 -> 2024-07-19T12:00:00Z .. 2024-07-26T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-july-26-aug-2 -> 2024-07-26T12:00:00Z .. 2024-08-02T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-august-9-16 -> 2024-08-09T12:00:00Z .. 2024-08-16T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-august-16-23 -> 2024-08-16T12:00:00Z .. 2024-08-23T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-august-23-30 -> 2024-08-23T12:00:00Z .. 2024-08-30T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-august-30-sept-6 -> 2024-08-30T12:00:00Z .. 2024-09-06T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-sept-13-20 -> 2024-09-13T12:00:00Z .. 2024-09-20T12:00:00Z
+ - window fallback to title: elon-musk-of-tweets-nov-8-15 -> 2024-11-08T18:33:00Z .. 2024-11-15T17:00:00Z
+ - description span 38d overridden by title: elon-musk-of-tweets-january-3-january-10
+ - window fallback to title: elon-musk-of-tweets-january-3-january-10 -> 2025-01-03T17:00:00Z .. 2025-01-10T17:00:00Z
+ - n_winners=0: elon-musk-number-of-tweets-25-times-7-31
+ - n_winners=0: elon-musk-number-of-tweets-25-times-7-29
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-13-than-day-before | label='' | q='Will Elon Musk tweet more August 13 than day before?'
+ - n_winners=0: will-elon-musk-number-of-tweets-be-higher-on-august-13-than-day-before
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-14-than-day-before | label='' | q='Will Elon Musk tweet more August 14 than day before?'
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-15-than-day-before | label='' | q='Will Elon Musk tweet more August 15 than day before?'
+ - n_winners=0: will-elon-musk-number-of-tweets-be-higher-on-august-15-than-day-before
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-16-than-day-before | label='' | q='Will Elon Musk tweet more August 16 than day before?'
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-17-than-day-before | label='' | q='Will Elon Musk tweet more August 17 than day before?'
+ - n_winners=0: will-elon-musk-number-of-tweets-be-higher-on-august-17-than-day-before
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-18-than-day-before | label='' | q='Will Elon Musk tweet more August 18 than day before?'
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-19-than-day-before | label='' | q='Will Elon Musk tweet more August 19 than day before?'
+ - n_winners=0: will-elon-musk-number-of-tweets-be-higher-on-august-19-than-day-before
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-21-than-day-before | label='' | q='Will Elon Musk tweet more August 21 than day before?'
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-23-than-day-before | label='' | q='Will Elon Musk tweet more August 23 than day before?'
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-22-than-day-before | label='' | q='Will Elon Musk tweet more August 22 than day before?'
+ - n_winners=0: will-elon-musk-number-of-tweets-be-higher-on-august-22-than-day-before
+ - unparsed bucket: will-elon-musk-number-of-tweets-be-higher-on-august-20-than-day-before | label='' | q='Will Elon Musk tweet more August 20 than day before?'
+ - near-settled prices ['0.0005', '0.9995']
+ - n_winners=0: elon-musk-of-tweets-october-2026
+ - n_winners=0: elon-musk-of-tweets-october-6-october-13-2026
+ - n_winners=0: elon-musk-of-tweets-october-8-october-10-2026
+ - n_winners=0: elon-musk-of-tweets-october-9-october-16-2026
+ - n_winners=0: elon-musk-of-tweets-october-10-october-12-2026
+ - n_winners=0: elon-musk-of-tweets-october-13-october-20-2026
+ - n_winners=0: elon-musk-of-tweets-october-12-october-14-2026
