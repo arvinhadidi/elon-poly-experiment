@@ -1,0 +1,8 @@
+shadow.db
+shadow.db-*
+logs/
+rawbooks/
+report.md
+__pycache__/
+venv/
+.venv/

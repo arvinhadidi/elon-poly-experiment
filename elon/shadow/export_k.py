@@ -6,7 +6,7 @@ import os, sys, json, runpy, datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
 bt = runpy.run_path(os.path.join(HERE, "..", "backtest.py"))
 k_walk, LEADS, FAMS, dec, fit_k = bt["k_walk"], bt["LEADS"], bt["FAMS"], bt["dec"], bt["fit_k"]
-out = {"generated_utc": datetime.datetime.utcnow().isoformat() + "Z", "default_k": bt["DEFAULT_K"],
+out = {"generated_utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "default_k": bt["DEFAULT_K"],
        "n_events": {f: int(dec[dec.family == f].event_slug.nunique()) for f in FAMS}, "families": {}}
 for f in FAMS:
     past = dec[dec.family == f]
