@@ -1,0 +1,306 @@
+# Adversarial review: is the weekly Elon bucket edge fake?
+
+Replication check: primary weekly slip0 n=384 ROI=+68.3% PnL=$2624 (bt_summary: 384, +68%, $2624). Events with trades=86.
+bt_trades.csv cross-check: n=384 pnl=$2624
+
+0.5c: n=327 ROI=+41.3%; 1c: n=282 ROI=+15.7%
+
+## 1. Lottery skew: null strategies
+
+Market calibration of ALL weekly priced buckets (primary leads), no model involved. If hit >> price the market is longshot-underpriced and ANY random longshot buyer wins:
+
+| pb | n | mean_price | hit | hit_minus_price |
+|---|---|---|---|---|
+| (0.0, 0.005] | 1568 | 0.003 | 0.004 | 0.002 |
+| (0.005, 0.01] | 565 | 0.007 | 0.016 | 0.009 |
+| (0.01, 0.02] | 554 | 0.014 | 0.016 | 0.002 |
+| (0.02, 0.05] | 796 | 0.033 | 0.043 | 0.010 |
+| (0.05, 0.1] | 936 | 0.075 | 0.069 | -0.005 |
+| (0.1, 0.2] | 996 | 0.142 | 0.129 | -0.014 |
+| (0.2, 0.35] | 378 | 0.258 | 0.180 | -0.078 |
+| (0.35, 0.5] | 301 | 0.460 | 0.090 | -0.370 |
+
+
+Null strategies (ROI, $10 flat, same fee), real strategy vs distribution under 'no model information':
+
+| slip | null | null_ROI_mean | null_ROI_p2_5 | null_ROI_p97_5 | ours | pct_null_ge_ours |
+|---|---|---|---|---|---|---|
+| 0.000 | matched-price random buckets (any event, same lead) | 0.205 | -0.468 | 1.301 | 0.683 | 0.143 |
+| 0.000 | shuffled model within event x lead (no information) | 0.296 | -0.491 | 1.233 | 0.683 | 0.196 |
+| 0.000 | random buckets, same count per event x lead | 0.686 | -0.500 | 2.571 | 0.683 | 0.443 |
+| 0.005 | matched-price random buckets (any event, same lead) | -0.025 | -0.506 | 0.642 | 0.413 | 0.105 |
+| 0.005 | shuffled model within event x lead (no information) | -0.586 | -0.809 | -0.311 | 0.413 | 0.000 |
+| 0.005 | random buckets, same count per event x lead | -0.346 | -0.813 | 0.359 | 0.413 | 0.022 |
+
+
+Leave-top-5-events-out (fragility) under the same nulls:
+
+| slip | null | null_drop5_mean | null_drop5_p97_5 | ours_drop5 | pct_null_drop5_ge_ours |
+|---|---|---|---|---|---|
+| 0.000 | matched-price random buckets (any event, same lead) | -0.513 | -0.121 | 0.035 | 0.002 |
+| 0.000 | shuffled model within event x lead (no information) | -0.716 | -0.359 | 0.035 | 0.001 |
+| 0.000 | random buckets, same count per event x lead | -0.597 | -0.257 | 0.035 | 0.003 |
+| 0.005 | matched-price random buckets (any event, same lead) | -0.558 | -0.203 | -0.119 | 0.017 |
+| 0.005 | shuffled model within event x lead (no information) | -0.890 | -0.731 | -0.119 | 0.000 |
+| 0.005 | random buckets, same count per event x lead | -0.853 | -0.657 | -0.119 | 0.000 |
+
+
+Our leave-k-out curve (ROI after dropping top-k events by PnL), k=0..10:
+
+| k | slip0 | slip0.5c |
+|---|---|---|
+| 0.000 | 0.683 | 0.413 |
+| 1.000 | 0.447 | 0.227 |
+| 2.000 | 0.297 | 0.133 |
+| 3.000 | 0.196 | 0.044 |
+| 4.000 | 0.112 | -0.037 |
+| 5.000 | 0.035 | -0.119 |
+| 6.000 | -0.043 | -0.204 |
+| 7.000 | -0.118 | -0.253 |
+| 8.000 | -0.184 | -0.305 |
+| 9.000 | -0.239 | -0.352 |
+| 10.000 | -0.287 | -0.400 |
+
+
+## 2. Multiple testing: threshold/lead/band grid (weekly, as-known)
+
+Specs enumerated: 216 per slippage level (leads sets x edge x cap x min-entry) = 648 total, 574 with >=15 trades.
+
+| slip | n_specs | share_ROI_gt0 | median_ROI | p10 | p90 | n_p_lt_05 | share_p_lt_05 | n_holm_sig |
+|---|---|---|---|---|---|---|---|---|
+| 0.000 | 195.000 | 0.872 | 0.510 | -0.058 | 0.942 | 47.000 | 0.241 | 0.000 |
+| 0.005 | 192.000 | 0.745 | 0.208 | -0.160 | 0.814 | 13.000 | 0.068 | 0.000 |
+| 0.010 | 187.000 | 0.642 | 0.077 | -0.284 | 0.705 | 5.000 | 0.027 | 0.000 |
+
+
+Note: p_block floor is 1/3000, Holm over ~216 specs needs p < 2.3e-04, so Holm counts are limited by bootstrap resolution; read them as 'cannot be rejected', not proof.
+
+Share of specs with ROI>0 at 0.5c by lead set:
+
+| leads | n_specs | share_pos | median_ROI |
+|---|---|---|---|
+| all0-95 | 24 | 0.875 | 0.131 |
+| early0-45 | 24 | 0.375 | -0.134 |
+| late65-95 | 24 | 0.625 | 0.082 |
+| lead0 | 12 | 0.500 | 0.176 |
+| lead25 | 12 | 1.000 | 0.523 |
+| lead50 | 24 | 1.000 | 0.838 |
+| lead75 | 24 | 0.625 | 0.139 |
+| mid20-60 | 24 | 0.708 | 0.094 |
+| primary0-25-50-75 | 24 | 1.000 | 0.451 |
+
+
+By edge threshold at 0.5c:
+
+| edge | n_specs | share_pos | median_ROI |
+|---|---|---|---|
+| 0.020 | 54.000 | 0.889 | 0.489 |
+| 0.050 | 54.000 | 0.759 | 0.207 |
+| 0.080 | 42.000 | 0.595 | 0.055 |
+| 0.120 | 42.000 | 0.690 | 0.123 |
+
+
+By price cap at 0.5c:
+
+| cap | n_specs | share_pos | median_ROI |
+|---|---|---|---|
+| 0.150 | 64.000 | 0.703 | 0.211 |
+| 0.300 | 64.000 | 0.766 | 0.200 |
+| 0.500 | 64.000 | 0.766 | 0.208 |
+
+White RC (studentised max over 195 specs, 14d block bootstrap), slip 0.0: best spec = leads all0-95, edge 0.02, cap 0.5, minentry 0.02, ROI +46%; RC p = 0.162
+White RC (studentised max over 192 specs, 14d block bootstrap), slip 0.005: best spec = leads all0-95, edge 0.02, cap 0.5, minentry 0.02, ROI +38%; RC p = 0.453
+White RC (studentised max over 187 specs, 14d block bootstrap), slip 0.01: best spec = leads lead50, edge 0.02, cap 0.3, minentry 0.02, ROI +71%; RC p = 0.579
+Primary spec slip 0.0: ROI +68%, p_block 0.024, ROI percentile within grid (share of specs better) 33%
+Primary spec slip 0.005: ROI +41%, p_block 0.055, ROI percentile within grid (share of specs better) 35%
+Primary spec slip 0.01: ROI +16%, p_block 0.244, ROI percentile within grid (share of specs better) 45%
+
+Forks actually taken in this project (not all in the grid): family (weekly vs 48h vs monthly/daily/related), 21 leads then a 4-lead 'primary', edge 5pp, cap 50c, floor 0.1c, walk-forward k vs in-sample k vs bias-adjust, as-known vs lookahead, 4-week rate window, slippage levels, entry<2c/>=2c split, Tue/Fri split, price bands, per-lead hotspot analysis. A defensible effective number of independent specs is 30-100, not 1.
+
+## 3. Mid/last-trade price vs executable ask
+
+Live books (one snapshot, 2026-10-10, 90 books with quotes): ask - mid by best-ask band. Backtest enters at the snapshot price (mid/last-trade) + slip.
+
+| band | n | median_spread | med_ask_minus_mid | med_rel_ask_over_mid | med_ask_usd_touch | med_ask_usd_2c |
+|---|---|---|---|---|---|---|
+| <=2c | 35 | 0.002 | 0.001 | 0.221 | 1.935 | 27.715 |
+| 2-5c | 20 | 0.003 | 0.002 | 0.051 | 3.308 | 41.178 |
+| 5-15c | 25 | 0.010 | 0.005 | 0.043 | 22.350 | 154.756 |
+| 15-50c | 9 | 0.060 | 0.030 | 0.070 | 22.209 | 44.560 |
+
+
+Books with a quote that are 1-sided/crossed or best_bid==0: 17 of 90. In a <=2c band a mid of (0+ask)/2 is not a price you can buy at.
+
+Raw trade files cover 69 events, 2713861 prints, 2026-06-30 to 2026-10-09 (Jul-Oct 2026 only; none cover Dec-Jun, i.e. none cover the high-vol regime that made the PnL).
+
+Jul-Oct 2026 weekly rows with Polymarket trade history: snapshot price vs actual BUY-YES prints in +-10 min (YES-space; NO sells/buys converted). Only rows with a snapshot price in [0.1c,50c] on primary leads:
+
+| band | rows | with_buy_print | mean_snap | mean_buy_print | med_buy_minus_snap | med_first_buy_minus_snap | med_ratio | last_print_was_sell |
+|---|---|---|---|---|---|---|---|---|
+| <=2c | 642 | 0.445 | 0.005 | 0.006 | -0.001 | -0.001 | 0.889 | 0.466 |
+| 2-5c | 178 | 0.685 | 0.033 | 0.032 | -0.001 | -0.000 | 0.979 | 0.494 |
+| 5-15c | 400 | 0.705 | 0.095 | 0.084 | -0.002 | -0.003 | 0.982 | 0.475 |
+| 15-50c | 494 | 0.700 | 0.317 | 0.170 | -0.005 | -0.005 | 0.974 | 0.516 |
+
+
+Strategy trades inside raw-trade coverage (Jul-Oct 2026 weekly events): n=101, ROI at snapshot price +35.6%
+ of which with BUY prints within +-10min: 87; ROI at actual median BUY print +54.2% vs at snapshot +58.2%; mean entry print/snap = 1.04
+ unfillable-in-window (no BUY print in +-10min): 14 of 101
+
+## 4. Stale snapshot prices
+
+price_snapshots.dt_sec = |price_ts - target_ts| (<=600). Distribution on strategy trades:
+ median dt_sec 11, share dt>300s 0.0%
+ rows with computed last-change age: 384 of 384
+ minutes since last price change (strategy trades): quantiles {0.25: 1.0, 0.5: 4.1, 0.75: 17.0, 0.9: 66.9}
+| subset | n | events | ROI_slip0 | PnL | p_boot |
+|---|---|---|---|---|---|
+| age<=30m | 313 | 83 | 0.696 | 2178.182 | 0.029 |
+| age>30m | 71 | 45 | 0.628 | 445.983 | 0.214 |
+| age<=10m | 249 | 77 | 0.418 | 1041.338 | 0.108 |
+| age>120m | 17 | 16 | -0.355 | -60.342 | 0.744 |
+
+ At 0.5c slip: fresh (<=30m) n=269 ROI +44.2% p=0.092; stale n=58 ROI +27.7%
+ Top-5 PnL events: median age of their winning trades' price = 8.1 min; share of their winning trades with stale (>30m) price = 17%
+
+## 5. Regime (post-rate)
+
+Monthly, slip 0.0:
+
+| month | n | events | PnL | ROI | posts_per_day |
+|---|---|---|---|---|---|
+| 2025-12 | 59 | 9 | -322.617 | -0.547 | 53.161 |
+| 2026-01 | 53 | 9 | 145.416 | 0.274 | 68.903 |
+| 2026-02 | 26 | 8 | 789.065 | 3.035 | 43.786 |
+| 2026-03 | 22 | 7 | 331.422 | 1.506 | 42.903 |
+| 2026-04 | 19 | 8 | 41.768 | 0.220 | 35.000 |
+| 2026-05 | 64 | 9 | 401.967 | 0.628 | 27.194 |
+| 2026-06 | 40 | 9 | 877.476 | 2.194 | 32.467 |
+| 2026-07 | 37 | 9 | 217.424 | 0.588 | 28.484 |
+| 2026-08 | 28 | 8 | 297.752 | 1.063 | 28.484 |
+| 2026-09 | 29 | 9 | -82.096 | -0.283 | 29.067 |
+| 2026-10 | 7 | 1 | -73.412 | -1.049 | 43.600 |
+
+
+Monthly, slip 0.005:
+
+| month | n | events | PnL | ROI | posts_per_day |
+|---|---|---|---|---|---|
+| 2025-12 | 48 | 9 | -428.369 | -0.892 | 53.161 |
+| 2026-01 | 49 | 9 | 107.554 | 0.219 | 68.903 |
+| 2026-02 | 21 | 8 | 528.664 | 2.517 | 43.786 |
+| 2026-03 | 19 | 6 | 297.975 | 1.568 | 42.903 |
+| 2026-04 | 8 | 5 | 141.526 | 1.769 | 35.000 |
+| 2026-05 | 58 | 9 | 96.818 | 0.167 | 27.194 |
+| 2026-06 | 35 | 9 | 215.326 | 0.615 | 32.467 |
+| 2026-07 | 32 | 9 | 223.444 | 0.698 | 28.484 |
+| 2026-08 | 24 | 8 | 306.330 | 1.276 | 28.484 |
+| 2026-09 | 26 | 9 | -65.509 | -0.252 | 29.067 |
+| 2026-10 | 7 | 1 | -73.395 | -1.048 | 43.600 |
+
+
+Monthly, slip 0.01:
+
+| month | n | events | PnL | ROI | posts_per_day |
+|---|---|---|---|---|---|
+| 2025-12 | 44 | 9 | -387.780 | -0.881 | 53.161 |
+| 2026-01 | 41 | 9 | 129.026 | 0.315 | 68.903 |
+| 2026-02 | 15 | 7 | -58.639 | -0.391 | 43.786 |
+| 2026-03 | 17 | 5 | 269.198 | 1.584 | 42.903 |
+| 2026-04 | 6 | 3 | 6.157 | 0.103 | 35.000 |
+| 2026-05 | 52 | 9 | 116.217 | 0.223 | 27.194 |
+| 2026-06 | 29 | 9 | 214.253 | 0.739 | 32.467 |
+| 2026-07 | 28 | 9 | 120.820 | 0.431 | 28.484 |
+| 2026-08 | 21 | 7 | 142.117 | 0.677 | 28.484 |
+| 2026-09 | 22 | 9 | -36.333 | -0.165 | 29.067 |
+| 2026-10 | 7 | 1 | -73.377 | -1.048 | 43.600 |
+
+
+| slip | regime | n | events | ROI | PnL | p_boot | share_of_total_PnL |
+|---|---|---|---|---|---|---|---|
+| 0.000 | Dec-Feb | 138 | 26 | 0.443 | 611.864 | 0.307 | 0.233 |
+| 0.000 | Mar-Oct | 246 | 60 | 0.818 | 2012.301 | 0.010 | 0.767 |
+| 0.005 | Dec-Feb | 118 | 26 | 0.176 | 207.850 | 0.422 | 0.154 |
+| 0.005 | Mar-Oct | 209 | 56 | 0.547 | 1142.516 | 0.035 | 0.846 |
+| 0.010 | Dec-Feb | 100 | 25 | -0.317 | -317.393 | 0.838 | -0.719 |
+| 0.010 | Mar-Oct | 182 | 52 | 0.417 | 759.051 | 0.066 | 1.719 |
+
+
+Mar-Oct only, slip 0: leave-k-out ROI (k=0,1,2,3,5): [0.82, 0.59, 0.44, 0.31, 0.08]; top-3 events of Mar-Oct: tweets-june-19-june-26:$583, -tweets-june-30-july-7:$392, st-28-september-4-2026:$312
+
+Top-8 events by PnL (slip 0):
+
+| event_slug | PnL | n | start |
+|---|---|---|---|
+| elon-musk-of-tweets-february-3-february-10 | 920.899 | 3 | 2026-02-03T17:00:00Z |
+| elon-musk-of-tweets-june-19-june-26 | 583.077 | 4 | 2026-06-19T16:00:00Z |
+| elon-musk-of-tweets-june-30-july-7 | 392.071 | 5 | 2026-06-30T16:00:00Z |
+| elon-musk-of-tweets-august-28-september-4-2026 | 312.396 | 2 | 2026-08-28T16:00:00Z |
+| elon-musk-of-tweets-march-20-march-27 | 287.948 | 6 | 2026-03-20T16:00:00Z |
+| elon-musk-of-tweets-january-16-january-23 | 281.930 | 6 | 2026-01-16T17:00:00Z |
+| elon-musk-of-tweets-july-3-july-10 | 258.650 | 8 | 2026-07-03T16:00:00Z |
+| elon-musk-of-tweets-may-12-may-19 | 212.823 | 10 | 2026-05-12T16:00:00Z |
+
+
+## 6. Data integrity
+
+Backtest weekly events: 88; tracker final_count inside Polymarket's resolved bucket: 88; MISMATCH: 0
+
+Weekly events containing >=1 post imported >1h late: 17 of 88; >=5 late posts: 12. Late-import events' trades (slip0): n=57, PnL $127
+| event_slug | n | late1h | late6h | sum | size |
+|---|---|---|---|---|---|
+| elon-musk-of-tweets-october-2-october-9-2026 | 326 | 112 | 93 | -73.412 | 7 |
+| elon-musk-of-tweets-august-25-september-1-2026 | 174 | 33 | 32 | -31.308 | 3 |
+| elon-musk-of-tweets-august-21-august-28-2026 | 190 | 33 | 32 | -20.964 | 2 |
+| elon-musk-of-tweets-september-8-september-15-2026 | 187 | 30 | 22 | -31.348 | 3 |
+| elon-musk-of-tweets-september-4-september-11-2026 | 176 | 22 | 22 | -41.889 | 4 |
+| elon-musk-of-tweets-april-28-may-5 | 158 | 14 | 10 | -10.422 | 1 |
+| elon-musk-of-tweets-april-24-may-1 | 191 | 14 | 10 | -10.473 | 1 |
+| elon-musk-of-tweets-january-27-february-3 | 351 | 11 | 1 | -10.499 | 1 |
+
+Nov 2025 backfill: 65% of Nov-2025 posts were imported >24h late (648 posts in one batch on 2025-11-24), so K_asknown for any Nov window is junk; backtest starts Dec 1 so unaffected, but the model's trailing 4-week rate for Dec 2025 events straddles the Nov backfill. Deleted posts: the CSV has no deletion flag, so deletions cannot be audited from this data; mismatches above are the only proxy.
+
+## 7. Does bigger model-minus-market edge earn more?
+
+All priced weekly rows (price 0.1c-50c, primary leads) binned by edge = p_model - price. Pre-fee excess return = hit - price. For a real edge, hit - price should rise with edge and track mean_model - mean_price:
+
+| eb | n | events | mean_price | mean_model | hit | hit_minus_price | model_minus_hit |
+|---|---|---|---|---|---|---|---|
+| (-1.0, -0.05] | 1071 | 87 | 0.256 | 0.076 | 0.101 | -0.155 | -0.025 |
+| (-0.05, -0.02] | 652 | 88 | 0.113 | 0.079 | 0.092 | -0.021 | -0.013 |
+| (-0.02, 0.0] | 1270 | 88 | 0.037 | 0.031 | 0.047 | 0.011 | -0.016 |
+| (0.0, 0.02] | 1891 | 88 | 0.023 | 0.031 | 0.023 | 0.000 | 0.008 |
+| (0.02, 0.05] | 826 | 88 | 0.035 | 0.067 | 0.045 | 0.010 | 0.022 |
+| (0.05, 0.08] | 224 | 78 | 0.053 | 0.116 | 0.085 | 0.032 | 0.031 |
+| (0.08, 0.12] | 98 | 53 | 0.064 | 0.160 | 0.112 | 0.048 | 0.048 |
+| (0.12, 0.2] | 49 | 32 | 0.076 | 0.226 | 0.143 | 0.067 | 0.083 |
+| (0.2, 1.0] | 13 | 9 | 0.123 | 0.393 | 0.077 | -0.046 | 0.316 |
+
+
+Spearman(edge, outcome-price) over all rows: rho=0.397, p=1.52e-229 (rows are heavily clustered, p is optimistic).
+
+Strategy trades by edge bin:
+
+| slip | edge_bin | n | events | hit | mean_entry | mean_model | ROI | PnL | p_boot |
+|---|---|---|---|---|---|---|---|---|---|
+| 0.000 | [0.05, 0.08) | 224 | 78 | 0.085 | 0.053 | 0.116 | 1.028 | 2301.602 | 0.026 |
+| 0.000 | [0.08, 0.12) | 98 | 53 | 0.112 | 0.064 | 0.160 | 0.120 | 117.433 | 0.393 |
+| 0.000 | [0.12, 0.2) | 49 | 32 | 0.143 | 0.076 | 0.226 | 0.579 | 283.689 | 0.161 |
+| 0.000 | [0.2, 1.0) | 13 | 9 | 0.077 | 0.123 | 0.393 | -0.604 | -78.559 | 0.904 |
+| 0.005 | [0.05, 0.08) | 187 | 74 | 0.107 | 0.064 | 0.127 | 0.668 | 1249.061 | 0.066 |
+| 0.005 | [0.08, 0.12) | 82 | 48 | 0.085 | 0.064 | 0.160 | -0.111 | -90.698 | 0.629 |
+| 0.005 | [0.12, 0.2) | 46 | 30 | 0.152 | 0.082 | 0.230 | 0.569 | 261.656 | 0.161 |
+| 0.005 | [0.2, 1.0) | 12 | 9 | 0.083 | 0.132 | 0.402 | -0.580 | -69.653 | 0.892 |
+
+
+Spearman(edge, pnl) over trades slip0: 0.203
+Linear regression outcome ~ price + p_model on all rows: coef price 0.10 [0.05,0.15], coef p_model 0.93 [0.80,1.07] (event-cluster bootstrap 95%). If the market is efficient price coef ~1 and p_model coef ~0.
+
+## 8. Capacity / dollars
+
+- slip0: $2624 on $3840 staked over 43 weeks = $60.6/week at $10/trade, 8.9 trades/week; leave-top-5 PnL $128
+- 0.5c: $1350 on $3270 staked over 43 weeks = $31.2/week at $10/trade, 7.6 trades/week; leave-top-5 PnL $-369
+- 1c: $442 on $2820 staked over 43 weeks = $10.2/week at $10/trade, 6.5 trades/week; leave-top-5 PnL $-542
+Depth (live books, medians): <=2c ask depth within 2c ~ $28, 2-5c ~ $41, 5-15c ~ $155, 15-50c ~ $45. Scaling to $100/trade, robustness.md already shows ROI +30% at p=0.12 (realistic fill).
+Per-lead (21 leads) slip 0.0: 14/20 positive. Binomial p(>= this many | 50%) = 0.058
+Per-lead (21 leads) slip 0.005: 9/20 positive. Binomial p(>= this many | 50%) = 0.748

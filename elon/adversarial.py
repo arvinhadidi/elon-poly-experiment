@@ -535,4 +535,30 @@ for slip in [0.0, 0.005]:
     s = LL[(LL.slip == slip) & (LL.n >= 10)]
     P(f"Per-lead (21 leads) slip {slip}: {int((s.ROI>0).sum())}/{len(s)} positive. Binomial p(>= this many | 50%) = {stats.binomtest(int((s.ROI>0).sum()), len(s), .5, alternative='greater').pvalue:.3f}")
 
+
+# ================= 9. Extra: model-free longshot bias & regression robustness =================
+P("\n## 9. Extra objections\n")
+P("9a. Is it just a model-free 'buy cheap buckets' effect? Buy EVERY weekly bucket with entry in a price band at primary leads (no model, no edge rule):\n")
+rows9 = []
+for lo_, hi_ in [(0.001, 0.02), (0.005, 0.05), (0.02, 0.05), (0.05, 0.15), (0.001, 0.5)]:
+    for slip in [0.0, 0.005, 0.01]:
+        x = W[W.lead_pct.isin(PRIM)].copy(); e = x.price + slip
+        x = x[(e >= lo_) & (e <= hi_)].copy(); x["entry"] = x.price + slip
+        x["pnl"] = 10 / x.entry * x.outcome_yes - 10 - 10 / x.entry * 0.05 * x.entry * (1 - x.entry)
+        rows9.append(dict(band=f"{lo_}-{hi_}", slip=slip, n=len(x), events=x.event_slug.nunique(), ROI=roi(x), p_boot=boot_p(x)))
+P(tab(pd.DataFrame(rows9)))
+x = trades(W, 0.0); sh = x[x.entry < 0.05].pnl.sum() / x.pnl.sum()
+P(f"\nShare of our slip0 PnL from entries < 5c: {sh:.0%}; from entries >=5c: {1-sh:.0%} (n={int((x.entry>=0.05).sum())}, ROI {roi(x[x.entry>=0.05]):+.0%}).")
+x5 = trades(W, 0.005); x5b = x5[x5.entry >= 0.05]
+P(f"At 0.5c, entries >=5c: n={len(x5b)}, ROI {roi(x5b):+.0%}, p={boot_p(x5b):.3f}; entries <5c: n={len(x5)-len(x5b)}, ROI {roi(x5[x5.entry<0.05]):+.0%}")
+P("\n9b. Regression robustness (outcome ~ price + p_model, rows price 0.1c-50c). Drop top-5 PnL events / drop Dec-Feb:")
+for nm, mask in [("all", np.ones(len(A), bool)), ("drop top5 events", ~A.event_slug.isin(top).values), ("Mar-Oct only", ~A.month.isin(["2025-12","2026-01","2026-02"]).values), ("only Dec-Feb", A.month.isin(["2025-12","2026-01","2026-02"]).values)]:
+    Xm = X[mask]; ym = A.outcome_yes.values[mask]
+    bh = la.lstsq(Xm, ym, rcond=None)[0]
+    es_ = A.event_slug.values[mask]; u = np.unique(es_); gi2 = {e: np.where(es_ == e)[0] for e in u}
+    bb = []
+    for b in range(300):
+        pick = rsr.choice(u, len(u)); ix = np.concatenate([gi2[e] for e in pick]); bb.append(la.lstsq(Xm[ix], ym[ix], rcond=None)[0][2])
+    P(f" - {nm}: n={mask.sum()}, coef p_model {bh[2]:.2f} [{np.quantile(bb,.025):.2f},{np.quantile(bb,.975):.2f}], coef price {bh[1]:.2f}")
+
 open(f"{O}/adversarial_raw.txt", "w").write("\n".join(OUT))
