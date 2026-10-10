@@ -554,8 +554,9 @@ def main():
 
 
 def venue_checks():
+    """Kalshi and Manifold, signal only. Returns markdown lines for related_notes.md."""
     kal_md, man_md = [], []
-    # Kalshi: list all series, keep title/ticker matches
+    cut = NOW - timedelta(days=90)
     try:
         series, cursor = [], None
         while True:
@@ -568,47 +569,62 @@ def venue_checks():
             cursor = r.get("cursor")
             if not cursor or not batch:
                 break
-        kre = re.compile(r"elon|musk|tweet|post|truth|mention|views?\b|youtube|mrbeast", re.I)
-        matched = [s for s in series if kre.search((s.get("title") or "") + " " + (s.get("ticker") or ""))]
-        kal_md.append(f"- Kalshi series listed: {len(series)}; title/ticker matches: {len(matched)}")
-        for s in matched[:40]:
-            tk = s.get("ticker")
+        kre = re.compile(r"\btweets?\b|\bposts?\b(?! malone)|truth social|view count|daily views|views? (?:this|per|on)|"
+                         r"\bviews\b|\bmentions?\b|mr\.? ?beast|youtube|elon", re.I)
+        matched = [s_ for s_ in series if kre.search((s_.get("title") or "") + " " + (s_.get("ticker") or ""))]
+        kal_md.append(f"- Kalshi series listed: {len(series):,}; title/ticker matches (tweet/post/truth/views/mention/MrBeast/YouTube/Elon): {len(matched)}")
+        rows = []
+        for s_ in matched:
+            tk = s_.get("ticker")
             try:
-                mk = get(KALSHI + "/markets", params={"series_ticker": tk, "limit": 1000})
-                markets = mk.get("markets", []) or []
-                vol = sum(f(m.get("volume"), 0.0) or 0 for m in markets)
-                st = {}
-                for m in markets:
-                    st[m.get("status")] = st.get(m.get("status"), 0) + 1
-                kal_md.append(f"  - {tk} | {s.get('title')} | markets={len(markets)} status={st} contracts_volume={vol:,.0f}")
+                mk = get(KALSHI + "/markets", params={"series_ticker": tk, "limit": 1000}).get("markets", []) or []
+                ev = get(KALSHI + "/events", params={"series_ticker": tk, "limit": 200}).get("events", []) or []
             except Exception as ex:  # noqa: BLE001
-                kal_md.append(f"  - {tk} | {s.get('title')} | market fetch failed: {ex}")
-        if not matched:
-            kal_md.append("- No Kalshi series matched elon|musk|tweet|post|truth|mention|views|youtube|mrbeast.")
-        (RAW_DIR / "kalshi_series.json").write_text(json.dumps(matched, default=str))
+                rows.append((0, tk, s_.get("title"), s_.get("frequency"), -1, -1, -1, f"fetch failed: {ex}"))
+                continue
+            vol = sum(f(m.get("volume_fp"), 0.0) or 0.0 for m in mk)
+            recent = 0
+            for e in ev:
+                ct = iso(e.get("close_time") or e.get("expected_expiration_time") or "")
+                if ct and ct >= cut:
+                    recent += 1
+            st = defaultdict(int)
+            for m in mk:
+                st[m.get("status")] += 1
+            rows.append((vol, tk, s_.get("title"), s_.get("frequency"), len(mk), len(ev), recent,
+                         ",".join(f"{k}:{v}" for k, v in sorted(st.items(), key=lambda kv: str(kv[0])))))
+        rows.sort(key=lambda r: -r[0])
+        kal_md.append("- Kalshi table (sorted by contract volume; events_90d = events with close time in last 90 days):")
+        kal_md.append("")
+        kal_md.append("| ticker | title | frequency | markets | events | events_90d | contracts_volume | status |")
+        kal_md.append("|---|---|---|---|---|---|---|---|")
+        for vol, tk, title, freq, nm, ne, rec, st in rows[:60]:
+            kal_md.append(f"| {tk} | {title} | {freq} | {nm} | {ne} | {rec} | {vol:,.0f} | {st} |")
+        (RAW_DIR / "kalshi_matches.json").write_text(json.dumps(
+            [dict(ticker=r[1], title=r[2], frequency=r[3], markets=r[4], events=r[5], events_90d=r[6],
+                  contracts_volume=r[0]) for r in rows], indent=1))
     except Exception as ex:  # noqa: BLE001
         kal_md.append(f"- Kalshi check failed: {ex}")
 
-    # Manifold search
     try:
         seen = {}
         for term in ["elon tweets", "elon musk tweets", "tweets", "truth social posts", "trump posts",
-                     "mrbeast views", "youtube views", "# of tweets", "mentions"]:
+                     "mrbeast views", "youtube views", "# of tweets", "mentions", "tweet count", "posts count"]:
             r = get(MANIFOLD + "/search-markets", params={"term": term, "limit": 100})
             for m in r or []:
                 seen.setdefault(m.get("id"), m)
-        mre = re.compile(r"elon|musk|tweet|post|truth social|views|mention|mrbeast", re.I)
-        hits = [m for m in seen.values() if mre.search(m.get("question") or "")]
-        count_hits = [m for m in hits if re.search(r"tweet|post|views|mention", m.get("question") or "", re.I)]
-        man_md.append(f"- Manifold search: {len(seen)} unique markets across 9 terms; {len(hits)} match "
-                      f"elon/musk/tweet/post/truth/views/mention/mrbeast.")
-        for m in sorted(hits, key=lambda x: -(x.get("volume") or 0))[:25]:
-            man_md.append(f"  - {m.get('question')} | vol={m.get('volume', 0):,.0f} resolved={m.get('isResolved')} "
-                          f"close={datetime.fromtimestamp((m.get('closeTime') or 0)/1000, timezone.utc).date() if m.get('closeTime') else ''} "
-                          f"| {m.get('url')}")
-        if not count_hits:
-            man_md.append("- No Manifold count-style (tweets/posts/views/mentions) market found.")
-        (RAW_DIR / "manifold_hits.json").write_text(json.dumps(hits, default=str))
+        count_re = re.compile(r"how many|number of|#\s?of|at least \d|\d+\+? (?:tweets|posts|views|mentions)|"
+                              r"surpass|more than \d+ (?:tweets|posts|views)|(?:tweets|posts|views|mentions) (?:in|this|per|next|between)", re.I)
+        subj_re = re.compile(r"elon|musk|trump|mr\.? ?beast|truth social|zelenskyy|khamenei|white house|ted cruz|nyc mayor|\bcz\b|cobratate|andrew tate", re.I)
+        hits = [m for m in seen.values() if count_re.search(m.get("question") or "") and subj_re.search(m.get("question") or "")]
+        man_md.append(f"- Manifold search: {len(seen)} unique markets across 11 terms; {len(hits)} are count-style "
+                      f"(how many / # of / surpass / N tweets) about Elon, Trump, MrBeast, Zelenskyy, Khamenei, WH, Cruz, NYC Mayor, CZ or Tate.")
+        for m in sorted(hits, key=lambda x: -(x.get("volume") or 0))[:15]:
+            close = datetime.fromtimestamp((m.get("closeTime") or 0) / 1000, timezone.utc).date() if m.get("closeTime") else ""
+            man_md.append(f"  - {m.get('question')} | vol={(m.get('volume') or 0):,.0f} resolved={m.get('isResolved')} close={close} | {m.get('url')}")
+        if not hits:
+            man_md.append("- No Manifold count-style tweet/post/view market about these subjects.")
+        (RAW_DIR / "manifold_hits.json").write_text(json.dumps(list(seen.values()), default=str))
     except Exception as ex:  # noqa: BLE001
         man_md.append(f"- Manifold check failed: {ex}")
     return kal_md, man_md
