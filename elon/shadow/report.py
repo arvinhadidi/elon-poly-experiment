@@ -48,6 +48,10 @@ def main():
         L.append(f"- event-clustered bootstrap p (ROI <= 0, 10k resamples of events): {f(p)}")
         for fam, g in t.groupby("family"):
             L.append(f"- {fam}: n={len(g)}, events={g.event_slug.nunique()}, ROI {pc(roi(g))}, p={f(boot_p(g))}")
+        # Pre-registered secondary arm (FINDINGS.md): entries >= 5c only, the band the adversarial review found most robust.
+        g5 = t[t.ask >= 0.05]
+        if len(g5):
+            L.append(f"- secondary arm, ask >= 5c: n={len(g5)}, events={g5.event_slug.nunique()}, ROI {pc(roi(g5))}, p={f(boot_p(g5))}")
         def grp(col):
             o = t.groupby(col, observed=True).agg(n=("pnl", "size"), events=("event_slug", "nunique"), pnl=("pnl", "sum"), stake=("stake", "sum"), hit=("outcome_yes", "mean")).reset_index()
             o["ROI"] = (o.pnl / o.stake).map(pc); o["pnl"] = o.pnl.round(2); o["hit"] = o.hit.map(lambda x: f"{x:.0%}")

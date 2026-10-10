@@ -123,29 +123,29 @@ Live books (one snapshot, 2026-10-10, 90 books with quotes): ask - mid by best-a
 
 | band | n | median_spread | med_ask_minus_mid | med_rel_ask_over_mid | med_ask_usd_touch | med_ask_usd_2c |
 |---|---|---|---|---|---|---|
-| <=2c | 35 | 0.002 | 0.001 | 0.221 | 1.935 | 27.715 |
-| 2-5c | 20 | 0.003 | 0.002 | 0.051 | 3.308 | 41.178 |
-| 5-15c | 25 | 0.010 | 0.005 | 0.043 | 22.350 | 154.756 |
-| 15-50c | 9 | 0.060 | 0.030 | 0.070 | 22.209 | 44.560 |
+| <=2c | 70 | 0.002 | 0.001 | 0.229 | 2.083 | 27.756 |
+| 2-5c | 42 | 0.004 | 0.002 | 0.057 | 2.168 | 40.527 |
+| 5-15c | 48 | 0.010 | 0.005 | 0.043 | 17.760 | 166.352 |
+| 15-50c | 18 | 0.060 | 0.030 | 0.070 | 23.396 | 66.352 |
 
 
-Books with a quote that are 1-sided/crossed or best_bid==0: 17 of 90. In a <=2c band a mid of (0+ask)/2 is not a price you can buy at.
+Books with a quote that are 1-sided/crossed or best_bid==0: 34 of 180. In a <=2c band a mid of (0+ask)/2 is not a price you can buy at.
 
-Raw trade files cover 69 events, 2713861 prints, 2026-06-30 to 2026-10-09 (Jul-Oct 2026 only; none cover Dec-Jun, i.e. none cover the high-vol regime that made the PnL).
+Raw trade files cover 76 events, 3048089 prints, 2026-06-20 to 2026-10-09 (Jul-Oct 2026 only; none cover Dec-Jun, i.e. none cover the high-vol regime that made the PnL).
 
 Jul-Oct 2026 weekly rows with Polymarket trade history: snapshot price vs actual BUY-YES prints in +-10 min (YES-space; NO sells/buys converted). Only rows with a snapshot price in [0.1c,50c] on primary leads:
 
 | band | rows | with_buy_print | mean_snap | mean_buy_print | med_buy_minus_snap | med_first_buy_minus_snap | med_ratio | last_print_was_sell |
 |---|---|---|---|---|---|---|---|---|
-| <=2c | 642 | 0.445 | 0.005 | 0.006 | -0.001 | -0.001 | 0.889 | 0.466 |
-| 2-5c | 178 | 0.685 | 0.033 | 0.032 | -0.001 | -0.000 | 0.979 | 0.494 |
-| 5-15c | 400 | 0.705 | 0.095 | 0.084 | -0.002 | -0.003 | 0.982 | 0.475 |
-| 15-50c | 494 | 0.700 | 0.317 | 0.170 | -0.005 | -0.005 | 0.974 | 0.516 |
+| <=2c | 714 | 0.455 | 0.005 | 0.006 | -0.001 | -0.001 | 0.889 | 0.458 |
+| 2-5c | 197 | 0.711 | 0.033 | 0.032 | -0.001 | 0.000 | 0.977 | 0.487 |
+| 5-15c | 435 | 0.720 | 0.095 | 0.084 | -0.002 | -0.002 | 0.981 | 0.478 |
+| 15-50c | 536 | 0.716 | 0.314 | 0.174 | -0.005 | -0.005 | 0.976 | 0.515 |
 
 
-Strategy trades inside raw-trade coverage (Jul-Oct 2026 weekly events): n=101, ROI at snapshot price +35.6%
- of which with BUY prints within +-10min: 87; ROI at actual median BUY print +54.2% vs at snapshot +58.2%; mean entry print/snap = 1.04
- unfillable-in-window (no BUY print in +-10min): 14 of 101
+Strategy trades inside raw-trade coverage (Jul-Oct 2026 weekly events): n=114, ROI at snapshot price +74.0%
+ of which with BUY prints within +-10min: 99; ROI at actual median BUY print +100.2% vs at snapshot +101.1%; mean entry print/snap = 1.03
+ unfillable-in-window (no BUY print in +-10min): 15 of 114
 
 ## 4. Stale snapshot prices
 
@@ -304,3 +304,35 @@ Linear regression outcome ~ price + p_model on all rows: coef price 0.10 [0.05,0
 Depth (live books, medians): <=2c ask depth within 2c ~ $28, 2-5c ~ $41, 5-15c ~ $155, 15-50c ~ $45. Scaling to $100/trade, robustness.md already shows ROI +30% at p=0.12 (realistic fill).
 Per-lead (21 leads) slip 0.0: 14/20 positive. Binomial p(>= this many | 50%) = 0.058
 Per-lead (21 leads) slip 0.005: 9/20 positive. Binomial p(>= this many | 50%) = 0.748
+
+## 9. Extra objections
+
+9a. Is it just a model-free 'buy cheap buckets' effect? Buy EVERY weekly bucket with entry in a price band at primary leads (no model, no edge rule):
+
+| band | slip | n | events | ROI | p_boot |
+|---|---|---|---|---|---|
+| 0.001-0.02 | 0.000 | 2687 | 88 | 0.409 | 0.203 |
+| 0.001-0.02 | 0.005 | 4770 | 88 | -0.676 | 1.000 |
+| 0.001-0.02 | 0.010 | 4423 | 88 | -0.815 | 1.000 |
+| 0.005-0.05 | 0.000 | 1959 | 88 | 0.535 | 0.037 |
+| 0.005-0.05 | 0.005 | 5688 | 88 | -0.556 | 1.000 |
+| 0.005-0.05 | 0.010 | 5572 | 88 | -0.696 | 1.000 |
+| 0.02-0.05 | 0.000 | 801 | 88 | 0.255 | 0.144 |
+| 0.02-0.05 | 0.005 | 937 | 88 | 0.045 | 0.420 |
+| 0.02-0.05 | 0.010 | 1172 | 88 | -0.213 | 0.910 |
+| 0.05-0.15 | 0.000 | 1574 | 88 | -0.119 | 0.950 |
+| 0.05-0.15 | 0.005 | 1618 | 88 | -0.159 | 0.991 |
+| 0.05-0.15 | 0.010 | 1649 | 88 | -0.200 | 0.999 |
+| 0.001-0.5 | 0.000 | 6094 | 88 | 0.115 | 0.309 |
+| 0.001-0.5 | 0.005 | 8270 | 88 | -0.453 | 1.000 |
+| 0.001-0.5 | 0.010 | 8243 | 88 | -0.549 | 1.000 |
+
+
+Share of our slip0 PnL from entries < 5c: 54%; from entries >=5c: 46% (n=167, ROI +72%).
+At 0.5c, entries >=5c: n=160, ROI +69%, p=0.017; entries <5c: n=167, ROI +15%
+
+9b. Regression robustness (outcome ~ price + p_model, rows price 0.1c-50c). Drop top-5 PnL events / drop Dec-Feb:
+ - all: n=6094, coef p_model 0.93 [0.80,1.06], coef price 0.10
+ - drop top5 events: n=5755, coef p_model 0.93 [0.77,1.07], coef price 0.11
+ - Mar-Oct only: n=3991, coef p_model 1.01 [0.86,1.13], coef price 0.08
+ - only Dec-Feb: n=2103, coef p_model 0.32 [-0.08,0.77], coef price 0.49
