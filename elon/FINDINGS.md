@@ -104,6 +104,24 @@ The reviewer puts the chance that a live weekly strategy makes more than $0 afte
 5. Tracker late-import share (more than 1 hour late) under 10%, and zero resolution mismatches.
 If it passes, start live at $10 a trade, a $100 cap per event, taker only, and buckets of 5c or more.
 
+## How fast can the shadow test give an answer?
+The shadow logger already trades the weekly and 48h markets together. Daily markets are too thin to add: about 36 events in total and about $600 of book.
+Together the two families resolve about 4.6 events a week. That is about 1.5× faster than weekly-only, not 7×.
+The edge pays out like a lottery: only about 27–32% of events make money, and the median event loses its whole stake.
+The table below comes from a simulation that resamples backtest events at +0.5c slippage:
+
+| Shadow length | Real edge: chance the record shows a loss | Real edge: chance ROI > +15% | No edge: chance ROI > +15% (fluke) |
+|---|---|---|---|
+| 4 weeks | 36% | 54% | 32% |
+| 8 weeks | 27% | 62% | 34% |
+| 12 weeks | 20% | 67% | 33% |
+| 26 weeks | 10% | 77% | 31% |
+
+**What this means:**
+- Shadow results under about 12 weeks can't tell a real edge from luck.
+- Shadow mostly checks the mechanics: fills, spread, depth and tracker reliability. Those answers come within 2–4 weeks.
+- A clearly negative ROI after 12 weeks or more is a fair reason to stop.
+
 ## Next steps
 1. Deploy `shadow/` on the EC2 box: run `shadow_logger.py` every 15 minutes, `settle.py` daily and `report.py` weekly. See `README.md`.
 2. Add an X-side post counter (a second source) to the shadow logger so tracker undercounts can be measured live.
