@@ -20,30 +20,41 @@ meta = pd.concat([
 ])[["token", "event_slug", "payout", "is_yes", "bucket_lo", "bucket_hi", "ws", "we", "family"]]
 
 files = [f for f in glob.glob(os.path.join(ROOT, "data/raw/trades/*.parquet")) if time.time() - os.path.getmtime(f) > 120]
-d = pd.concat([pd.read_parquet(f, columns=["proxyWallet", "side", "asset", "size", "price", "timestamp", "pseudonym", "transactionHash", "eventSlug"]) for f in files], ignore_index=True)
-d["asset"] = d.asset.astype(str)
-d = d.merge(meta, left_on="asset", right_on="token", how="inner")
-d = d[d.eventSlug == d.event_slug]
+def load(f):  # per file, to keep memory bounded on the full 21M-row tape
+    x = pd.read_parquet(f, columns=["proxyWallet", "side", "asset", "size", "price", "timestamp", "pseudonym", "eventSlug"])
+    x["asset"] = x.asset.astype(str)
+    x = x.merge(meta, left_on="asset", right_on="token", how="inner")
+    x = x[x.eventSlug == x.event_slug].drop(columns=["asset", "token", "eventSlug"])
+    for c in ["proxyWallet", "side", "pseudonym", "event_slug", "family"]:
+        x[c] = x[c].astype("category")
+    for c in ["size", "price", "payout", "bucket_lo", "bucket_hi"]:
+        x[c] = x[c].astype("float32")
+    return x
+parts = [load(f) for f in files]
+d = pd.concat(parts, ignore_index=True); del parts
+for c in ["proxyWallet", "side", "pseudonym", "event_slug", "family"]:
+    d[c] = d[c].astype(str).astype("category")
 n_files, n_rows = len(files), len(d)
 d["sgn"] = np.where(d.side == "BUY", 1.0, -1.0)
-d["pnl"] = d.sgn * d["size"] * (d.payout - d.price)
-d["notional"] = d["size"] * d.price
+d["pnl"] = d.sgn * d["size"].astype(float) * (d.payout.astype(float) - d.price.astype(float))
+d["notional"] = d["size"].astype(float) * d.price.astype(float)
 d["cheap"] = d.price < CHEAP
 d["lead"] = 100 * (d.we - d.timestamp) / (d.we - d.ws).clip(lower=1)   # % of window remaining at trade
 d["buy"] = d.side == "BUY"
-pseud = d.groupby("proxyWallet").pseudonym.agg(lambda s: s.mode().iat[0] if s.notna().any() else "")
+pseud = d.drop_duplicates("proxyWallet").set_index("proxyWallet").pseudonym.astype(str); pseud.index = pseud.index.astype(str)
 
 # upper-tail YES: YES bucket whose lo is above the event's most-traded YES bucket
-yv = d[d.is_yes].groupby(["event_slug", "bucket_lo"]).notional.sum().reset_index()
-mode_lo = yv.loc[yv.groupby("event_slug").notional.idxmax()].set_index("event_slug").bucket_lo
+yv = d[d.is_yes].groupby(["event_slug", "bucket_lo"], observed=True).notional.sum().reset_index()
+mode_lo = yv.loc[yv.groupby("event_slug", observed=True).notional.idxmax()].set_index("event_slug").bucket_lo
 d["upper_yes"] = d.is_yes & d.cheap & (d.bucket_lo > d.event_slug.map(mode_lo))
 
 # per wallet x event
 d["lw"] = d.lead * d.notional
-we = d.groupby(["proxyWallet", "event_slug"]).agg(
+we = d.groupby(["proxyWallet", "event_slug"], observed=True).agg(
     pnl=("pnl", "sum"), notional=("notional", "sum"), n_trades=("size", "size"),
     cheap_share=("cheap", "mean"), med_size=("size", "median"), lw=("lw", "sum"),
     n_buy=("buy", "sum")).reset_index()
+we["proxyWallet"] = we.proxyWallet.astype(str); we["event_slug"] = we.event_slug.astype(str)
 we["lead_pct"] = we.lw / we.notional.replace(0, np.nan)
 we.drop(columns="lw").to_csv(os.path.join(OUT, "wallets_by_event.csv.gz"), index=False)
 
@@ -59,9 +70,10 @@ w = g.agg(n_events=("event_slug", "nunique"), notional=("notional", "sum"), pnl=
           n_trades=("n_trades", "sum"), n_buy=("n_buy", "sum"), pct_profitable=("pnl", lambda s: (s > 0).mean())).reset_index()
 w["roi"] = w.pnl / w.notional.replace(0, np.nan)
 w["n_sell"] = w.n_trades - w.n_buy
-cs = d.groupby("proxyWallet").agg(cheap_share=("cheap", "mean"), med_size=("size", "median"),
+cs = d.groupby("proxyWallet", observed=True).agg(cheap_share=("cheap", "mean"), med_size=("size", "median"),
                                   lw=("lw", "sum"), nn=("notional", "sum")).reset_index()
 cs["avg_lead"] = cs.lw / cs.nn.replace(0, np.nan)
+cs["proxyWallet"] = cs.proxyWallet.astype(str)
 w = w.merge(cs[["proxyWallet", "cheap_share", "med_size", "avg_lead"]], on="proxyWallet")
 w["pseudonym"] = w.proxyWallet.map(pseud)
 w["addr"] = w.proxyWallet.str[:6] + ".." + w.proxyWallet.str[-4:]
@@ -121,7 +133,7 @@ for nm, x in [("BUY cheap YES (our strategy)", ch[ch.buy]), ("SELL cheap YES (co
               ("BUY cheap upper-tail YES", d[d.upper_yes & d.buy]), ("SELL cheap upper-tail YES", d[d.upper_yes & ~d.buy])]:
     L.append(side_stats(x, nm))
 sell = d[d.upper_yes & ~d.buy]
-sw = sell.groupby("proxyWallet").agg(sell_notional=("notional", "sum"), tail_pnl=("pnl", "sum")).join(w.set_index("proxyWallet")[["pseudonym", "addr", "pnl", "roi", "n_events", "class"]])
+sw = sell.groupby("proxyWallet", observed=True).agg(sell_notional=("notional", "sum"), tail_pnl=("pnl", "sum")).join(w.set_index("proxyWallet")[["pseudonym", "addr", "pnl", "roi", "n_events", "class"]])
 sw["share"] = sw.sell_notional / sw.sell_notional.sum()
 sw = sw.sort_values("sell_notional", ascending=False)
 wt = sw.sell_notional / sw.sell_notional.sum()
@@ -132,7 +144,7 @@ for _, r in sw.head(15).iterrows():
 # profitable wallets: buyer or seller of cheap
 L.append("\n## Do profitable wallets buy or sell cheap tokens?\n")
 L.append("| group | wallets | cheap-buy notional | cheap-sell notional | buy share of cheap notional |\n|---|---|---|---|---|")
-cb = d[d.cheap].groupby(["proxyWallet", "buy"]).notional.sum().unstack(fill_value=0).rename(columns={True: "b", False: "s"})
+cb = d[d.cheap].groupby(["proxyWallet", "buy"], observed=True).notional.sum().unstack(fill_value=0).rename(columns={True: "b", False: "s"})
 for c in ["sharp", "consistent loser", "market-maker-like", "one-off", "other"]:
     ids = w[w["class"] == c].proxyWallet
     x = cb.reindex(ids).fillna(0)

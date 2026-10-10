@@ -1,6 +1,6 @@
 # Wallet profile: Elon tweet-count markets
 
-Trade files used: 58 (files modified <2 min ago excluded); 2,220,317 resolved fills; 26,521 wallets; 58 events.
+Trade files used: 208 (files modified <2 min ago excluded); 21,142,623 resolved fills; 179,052 wallets; 208 events.
 
 Interpretation: each row is one wallet's fill (proxyWallet = that participant, side = THAT wallet's side). Both sides of a match appear as separate rows under the same transactionHash (every hash has >=2 rows; e.g. BUY No@0.999 + BUY Yes@0.001 = a mint, or BUY+SELL of the same asset). So per-wallet PnL is correct, but summed notional/PnL across wallets double-counts volume (PnL sums to ~0 across counterparties, before fees/unresolved).
 
@@ -10,129 +10,129 @@ PnL = realised to resolution (hold-to-resolution mark; ignores exits' timing). L
 
 | class | wallets | notional share | notional $ | PnL $ | ROI |
 |---|---|---|---|---|---|
-| consistent loser | 273.0 | 2.1% | 1,321,965 | -85,023 | -6.43% |
-| market-maker-like | 111.0 | 40.8% | 25,776,551 | 35,171 | 0.14% |
-| one-off | 16780.0 | 3.0% | 1,924,809 | -41,801 | -2.17% |
-| other | 8075.0 | 37.6% | 23,788,186 | -125,634 | -0.53% |
-| sharp | 1282.0 | 16.5% | 10,414,037 | 217,287 | 2.09% |
+| consistent loser | 1339.0 | 2.2% | 16,434,770 | -771,438 | -4.69% |
+| market-maker-like | 1115.0 | 36.4% | 276,867,088 | 570,598 | 0.21% |
+| one-off | 113756.0 | 4.2% | 32,202,337 | -1,198,804 | -3.72% |
+| other | 55710.0 | 38.2% | 290,254,762 | -1,625,264 | -0.56% |
+| sharp | 7132.0 | 19.1% | 144,986,890 | 2,996,695 | 2.07% |
 
-4209 wallets have >=10 events; with a 5% test ~210 false-positive 'sharp' labels are expected by chance alone, so treat the sharp class as an upper bound.
+21753 wallets have >=10 events; with a 5% test ~1088 false-positive 'sharp' labels are expected by chance alone, so treat the sharp class as an upper bound.
 
-Total notional (double-counted) $63,225,548; net PnL $-0.
+Total notional (double-counted) $760,745,847; net PnL $-28,213.
 
 ## Concentration
-Top 10 wallets = 27.3% of notional; top 50 = 54.4%; top 1 = 6.7%.
+Top 10 wallets = 16.0% of notional; top 50 = 35.5%; top 1 = 2.6%.
 
 ## Top 20 by notional
 
 | pseudonym | addr | events | notional $ | PnL $ | ROI | p(PnL>0) | class | cheap share | avg lead % |
 |---|---|---|---|---|---|---|---|---|---|
-| Oddball-Deviance | 0x590e..e43d | 58 | 4,256,660 | 11,219 | 0.3% | 0.103 | market-maker-like | 46% | 51 |
-| Courageous-Polish | 0xc4d5..87cf | 57 | 2,620,650 | 19,821 | 0.8% | 0.000 | market-maker-like | 29% | 39 |
-| Private-Patrolling | 0x7789..a280 | 54 | 1,894,172 | 9,711 | 0.5% | 0.000 | sharp | 0% | 11 |
-| Right-Simple | 0xfbcb..bb5d | 50 | 1,503,187 | 19,497 | 1.3% | 0.018 | market-maker-like | 22% | 24 |
-| Husky-Labourer | 0x5409..79db | 23 | 1,413,245 | -2,981 | -0.2% | 0.668 | other | 1% | 59 |
-| Serpentine-Maggot | 0x6964..ef53 | 56 | 1,288,486 | 4,378 | 0.3% | 0.018 | market-maker-like | 22% | 7 |
-| Verifiable-Macaw | 0x1e1a..7690 | 24 | 1,124,094 | 7,966 | 0.7% | 0.000 | market-maker-like | 25% | 76 |
-| Well-Worn-Foundation-Thread | 0x9d80..fcaf | 48 | 1,077,566 | -4,070 | -0.4% | 0.921 | market-maker-like | 0% | 54 |
-| Writhing-Rib | 0x2eb6..3e31 | 35 | 1,056,035 | 433 | 0.0% | 0.512 | market-maker-like | 38% | 38 |
-| Motionless-Everyone | 0x48c5..89f3 | 31 | 1,030,990 | -5,435 | -0.5% | 0.634 | market-maker-like | 11% | 15 |
-| Intelligent-Tax | 0x913f..c676 | 57 | 1,010,848 | -10,497 | -1.0% | 0.641 | market-maker-like | 9% | 17 |
-| Vengeful-Fiery | 0xe6c6..77b7 | 51 | 992,218 | -543 | -0.1% | 0.602 | other | 1% | 24 |
-| Best-Radish | 0x2924..dcde | 57 | 901,982 | -18,025 | -2.0% | 0.775 | market-maker-like | 49% | 37 |
-| Thin-Tiara | 0xc757..ccfc | 43 | 856,321 | 3,332 | 0.4% | 0.000 | sharp | 3% | 13 |
-| Tough-Hammer | 0xaac2..e8ce | 55 | 827,613 | -3,671 | -0.4% | 0.654 | market-maker-like | 0% | 16 |
-| Weird-Nylon | 0x6864..294b | 44 | 821,194 | -6,237 | -0.8% | 0.839 | market-maker-like | 60% | 55 |
-| Every-Reform | 0x8eab..a56d | 56 | 794,337 | 5,649 | 0.7% | 0.072 | other | 84% | 7 |
-| Impassioned-Prohibition | 0xfaf9..f4c4 | 47 | 651,918 | -1,699 | -0.3% | 0.640 | other | 0% | 26 |
-| Careful-Bunch | 0x122c..fbed | 56 | 576,198 | 11,709 | 2.0% | 0.001 | sharp | 31% | 24 |
-| Everlasting-Fit | 0x12ed..c9b4 | 55 | 567,756 | 7,024 | 1.2% | 0.193 | market-maker-like | 29% | 31 |
+| Gracious-Movement | 0xdf1b..b963 | 39 | 19,656,371 | 15,759 | 0.1% | 0.000 | sharp | 0% | 28 |
+| Courageous-Polish | 0xc4d5..87cf | 202 | 17,475,744 | 159,006 | 0.9% | 0.000 | market-maker-like | 24% | 33 |
+| Standard-Verification | 0x689a..779e | 108 | 16,991,938 | 605,513 | 3.6% | 0.000 | sharp | 62% | 29 |
+| Real-Veteran | 0xe8dd..ec86 | 74 | 15,966,211 | 3,991 | 0.0% | 0.276 | other | 1% | 64 |
+| Husky-Labourer | 0x5409..79db | 114 | 13,393,340 | 3,961 | 0.0% | 0.239 | other | 0% | 45 |
+| Lost-Macadamia | 0x45b3..35bc | 80 | 9,140,723 | -16,992 | -0.2% | 0.710 | other | 0% | 28 |
+| Motionless-Everyone | 0x48c5..89f3 | 141 | 8,077,604 | -50,875 | -0.6% | 0.788 | market-maker-like | 32% | 15 |
+| Serpentine-Maggot | 0x6964..ef53 | 202 | 7,756,198 | 35,741 | 0.5% | 0.005 | market-maker-like | 32% | 6 |
+| Creepy-Meteor | 0x471a..0328 | 168 | 7,430,089 | 45,493 | 0.6% | 0.003 | market-maker-like | 20% | 6 |
+| Wee-Globe | 0x5116..58c4 | 46 | 5,968,593 | -33,208 | -0.6% | 0.728 | other | 82% | 31 |
+| Pure-Hospitality | 0xf5d9..be50 | 97 | 5,839,456 | -554 | -0.0% | 0.473 | other | 2% | 9 |
+| Oddball-Deviance | 0x590e..e43d | 95 | 5,808,368 | 20,403 | 0.4% | 0.025 | market-maker-like | 46% | 49 |
+|  | 0x849c..4009 | 190 | 5,409,054 | 19,090 | 0.4% | 0.175 | market-maker-like | 48% | 31 |
+| Private-Patrolling | 0x7789..a280 | 178 | 5,407,189 | -21,305 | -0.4% | 0.842 | other | 0% | 33 |
+| Total-Pronoun | 0xd362..9bc4 | 68 | 5,233,430 | 833 | 0.0% | 0.093 | market-maker-like | 0% | 39 |
+| Fussy-Dad | 0xa59c..bb62 | 158 | 4,951,603 | 72,422 | 1.5% | 0.000 | market-maker-like | 49% | 8 |
+| Tough-Hammer | 0xaac2..e8ce | 136 | 4,920,235 | 4,109 | 0.1% | 0.342 | market-maker-like | 0% | 15 |
+| Every-Reform | 0x8eab..a56d | 196 | 4,615,321 | 30,474 | 0.7% | 0.000 | market-maker-like | 74% | 9 |
+| Verifiable-Macaw | 0x1e1a..7690 | 101 | 4,518,818 | 68,580 | 1.5% | 0.000 | market-maker-like | 52% | 74 |
+| Glamorous-Motel | 0x2d4c..2e02 | 49 | 4,485,763 | -63,756 | -1.4% | 0.977 | market-maker-like | 15% | 35 |
 
 ## Top 20 by PnL
 
 | pseudonym | addr | events | notional $ | PnL $ | ROI | p(PnL>0) | class | cheap share | avg lead % |
 |---|---|---|---|---|---|---|---|---|---|
-| Hospitable-Maestro | 0x2061..8ec9 | 4 | 45,855 | 22,646 | 49.4% | 0.134 | other | 52% | 16 |
-| Courageous-Polish | 0xc4d5..87cf | 57 | 2,620,650 | 19,821 | 0.8% | 0.000 | market-maker-like | 29% | 39 |
-| Right-Simple | 0xfbcb..bb5d | 50 | 1,503,187 | 19,497 | 1.3% | 0.018 | market-maker-like | 22% | 24 |
-| Unsightly-Dilapidation | 0xb0cc..f09b | 56 | 334,096 | 17,510 | 5.2% | 0.000 | sharp | 26% | 20 |
-| Slight-Campaign | 0x7505..2978 | 57 | 278,232 | 16,594 | 6.0% | 0.000 | sharp | 16% | 18 |
-| Careful-Bunch | 0x122c..fbed | 56 | 576,198 | 11,709 | 2.0% | 0.001 | sharp | 31% | 24 |
-| Terrible-Drudgery-Bloodflow | 0x2ea8..ffcf | 22 | 31,215 | 11,546 | 37.0% | 0.238 | other | 84% | 30 |
-| Oddball-Deviance | 0x590e..e43d | 58 | 4,256,660 | 11,219 | 0.3% | 0.103 | market-maker-like | 46% | 51 |
-|  | 0xf14e..6173 | 45 | 282,405 | 10,114 | 3.6% | 0.034 | sharp | 1% | 37 |
-| Private-Patrolling | 0x7789..a280 | 54 | 1,894,172 | 9,711 | 0.5% | 0.000 | sharp | 0% | 11 |
-| Distant-Inhibitor | 0x524d..4495 | 51 | 177,987 | 9,581 | 5.4% | 0.352 | other | 83% | 42 |
-| Black-Perpendicular-Shrimp | 0xc5e8..8354 | 41 | 40,664 | 8,666 | 21.3% | 0.263 | other | 97% | 24 |
-| Delightful-Freak | 0x811e..265c | 34 | 479,760 | 8,264 | 1.7% | 0.000 | market-maker-like | 25% | 29 |
-| Royal-Knickers | 0xb831..892b | 38 | 47,273 | 8,148 | 17.2% | 0.048 | sharp | 69% | 67 |
-| Verifiable-Macaw | 0x1e1a..7690 | 24 | 1,124,094 | 7,966 | 0.7% | 0.000 | market-maker-like | 25% | 76 |
-| Everlasting-Fit | 0x12ed..c9b4 | 55 | 567,756 | 7,024 | 1.2% | 0.193 | market-maker-like | 29% | 31 |
-| Fussy-Dad | 0xa59c..bb62 | 53 | 450,573 | 7,006 | 1.6% | 0.000 | market-maker-like | 47% | 16 |
-| Hidden-Contention | 0x42b8..1305 | 33 | 143,730 | 6,496 | 4.5% | 0.002 | sharp | 12% | 8 |
-| Plump-Turtle | 0x6d3f..a942 | 39 | 115,871 | 6,224 | 5.4% | 0.124 | other | 3% | 29 |
-| Teeming-Settler | 0xd317..025a | 53 | 124,188 | 5,979 | 4.8% | 0.000 | sharp | 60% | 9 |
+| Standard-Verification | 0x689a..779e | 108 | 16,991,938 | 605,513 | 3.6% | 0.000 | sharp | 62% | 29 |
+| Flamboyant-Disability | 0x90ed..b5bc | 54 | 2,300,656 | 300,543 | 13.1% | 0.026 | sharp | 73% | 26 |
+| Courageous-Polish | 0xc4d5..87cf | 202 | 17,475,744 | 159,006 | 0.9% | 0.000 | market-maker-like | 24% | 33 |
+| Scared-Chaos | 0x063a..eb4b | 3 | 275,158 | 155,964 | 56.7% | 0.036 | other | 86% | 39 |
+| Broken-Teriyaki | 0xbb9c..072b | 103 | 2,362,275 | 118,552 | 5.0% | 0.000 | sharp | 20% | 4 |
+| Unhealthy-Bog | 0xcbbc..b5d0 | 28 | 555,639 | 103,728 | 18.7% | 0.003 | sharp | 93% | 28 |
+| Lustrous-Proceedings | 0xacbc..7cc3 | 48 | 388,498 | 93,908 | 24.2% | 0.155 | other | 59% | 23 |
+|  | 0x265f..a448 | 62 | 1,009,976 | 85,635 | 8.5% | 0.000 | sharp | 31% | 4 |
+| Genuine-Armpit | 0xa638..1d87 | 87 | 1,279,281 | 82,272 | 6.4% | 0.080 | other | 32% | 11 |
+| Bumpy-Owl | 0xd8c4..848d | 138 | 1,884,984 | 74,197 | 3.9% | 0.001 | sharp | 94% | 30 |
+| Fussy-Dad | 0xa59c..bb62 | 158 | 4,951,603 | 72,422 | 1.5% | 0.000 | market-maker-like | 49% | 8 |
+| Bustling-Scene | 0x1355..6591 | 43 | 270,986 | 70,547 | 26.0% | 0.003 | sharp | 71% | 30 |
+| Verifiable-Macaw | 0x1e1a..7690 | 101 | 4,518,818 | 68,580 | 1.5% | 0.000 | market-maker-like | 52% | 74 |
+| Hefty-Sunshine | 0x7744..999e | 3 | 83,216 | 64,731 | 77.8% | 0.300 | other | 40% | 11 |
+| Glass-Typewriter | 0xa49b..7054 | 189 | 1,059,753 | 57,031 | 5.4% | 0.001 | sharp | 75% | 57 |
+| Several-Alien | 0xaca2..b9a1 | 177 | 704,915 | 54,970 | 7.8% | 0.151 | other | 30% | 24 |
+| Fabulous-Rating | 0x77c8..bc8c | 139 | 2,485,735 | 49,418 | 2.0% | 0.100 | other | 49% | 17 |
+| Creepy-Meteor | 0x471a..0328 | 168 | 7,430,089 | 45,493 | 0.6% | 0.003 | market-maker-like | 20% | 6 |
+| Crisp-Jumbo | 0x6df5..6430 | 138 | 240,913 | 39,292 | 16.3% | 0.026 | sharp | 83% | 7 |
+| Everlasting-Fit | 0x12ed..c9b4 | 162 | 1,479,691 | 38,493 | 2.6% | 0.002 | sharp | 27% | 32 |
 
 ## Worst 10 by PnL
 
 | pseudonym | addr | events | notional $ | PnL $ | ROI | p(PnL>0) | class | cheap share | avg lead % |
 |---|---|---|---|---|---|---|---|---|---|
-| Best-Radish | 0x2924..dcde | 57 | 901,982 | -18,025 | -2.0% | 0.775 | market-maker-like | 49% | 37 |
-| Several-Alien | 0xaca2..b9a1 | 56 | 155,136 | -15,422 | -9.9% | 0.830 | other | 11% | 37 |
-| Normal-Mainland | 0xe089..ad3a | 51 | 34,842 | -11,021 | -31.6% | 0.899 | other | 98% | 49 |
-| Intelligent-Tax | 0x913f..c676 | 57 | 1,010,848 | -10,497 | -1.0% | 0.641 | market-maker-like | 9% | 17 |
-| Cumbersome-Parent | 0x0472..fc04 | 8 | 351,704 | -9,974 | -2.8% | 0.647 | other | 38% | 43 |
-| Hollow-Palm | 0x6167..4447 | 8 | 35,328 | -7,882 | -22.3% | 0.675 | other | 78% | 120 |
-| Adored-Flour | 0xa301..bcbd | 22 | 50,852 | -6,583 | -12.9% | 0.983 | consistent loser | 13% | 36 |
-| Rusty-Afterlife | 0xf00c..40e4 | 12 | 25,388 | -6,456 | -25.4% | 0.629 | other | 2% | 54 |
-| Weird-Nylon | 0x6864..294b | 44 | 821,194 | -6,237 | -0.8% | 0.839 | market-maker-like | 60% | 55 |
-| Profitable-Violation | 0xf452..8ff9 | 54 | 126,623 | -6,041 | -4.8% | 0.943 | other | 46% | 28 |
+| Kindly-Patrolling | 0xd3d7..ac2b | 6 | 1,662,397 | -648,378 | -39.0% | 0.913 | other | 0% | 24 |
+| Each-Sneeze | 0x9193..b1f1 | 1 | 401,115 | -391,980 | -97.7% |  | one-off | 27% | 0 |
+| Minor-Applause | 0xd5af..5d38 | 22 | 4,330,857 | -166,366 | -3.8% | 0.631 | other | 1% | 22 |
+| Sparse-Teammate | 0xf5b1..c7e3 | 2 | 1,009,482 | -121,303 | -12.0% |  | one-off | 1% | 36 |
+| Hidden-Bloodflow | 0xce1e..851f | 6 | 112,347 | -73,406 | -65.3% | 0.990 | other | 96% | 45 |
+| Salty-Geometry | 0xbac4..1ab2 | 58 | 1,289,530 | -65,309 | -5.1% | 0.998 | consistent loser | 43% | 26 |
+| Necessary-Inversion | 0x8556..fad9 | 10 | 153,215 | -64,780 | -42.3% | 1.000 | consistent loser | 72% | 19 |
+| Glamorous-Motel | 0x2d4c..2e02 | 49 | 4,485,763 | -63,756 | -1.4% | 0.977 | market-maker-like | 15% | 35 |
+| Willing-Eve | 0xca6e..46f2 | 79 | 762,564 | -62,901 | -8.2% | 0.743 | other | 88% | 23 |
+| Motionless-Everyone | 0x48c5..89f3 | 141 | 8,077,604 | -50,875 | -0.6% | 0.788 | market-maker-like | 32% | 15 |
 
 ## Cheap (<0.15) YES tokens: who buys vs sells
 
 | set | notional $ | PnL $ | ROI | wallets |
 |---|---|---|---|---|
-| BUY cheap YES (our strategy) | 1,519,840 | 48,590 | 3.2% | 4676 |
-| SELL cheap YES (counterparty) | 1,047,573 | -47,267 | -4.5% | 3136 |
-| BUY cheap upper-tail YES | 747,976 | -438,771 | -58.7% | 3197 |
-| SELL cheap upper-tail YES | 514,070 | 309,672 | 60.2% | 2174 |
+| BUY cheap YES (our strategy) | 19,169,833 | 3,607,240 | 18.8% | 65152 |
+| SELL cheap YES (counterparty) | 14,203,481 | -2,124,317 | -15.0% | 39126 |
+| BUY cheap upper-tail YES | 8,956,103 | -8,472,229 | -94.6% | 40191 |
+| SELL cheap upper-tail YES | 6,534,562 | 6,213,171 | 95.1% | 25634 |
 
-Sellers of cheap upper-tail YES: 2174 wallets; top 10 = 40.4% of that volume. Notional-weighted share of those sellers with positive overall PnL: 67.0%; weighted mean overall ROI 0.41%. Aggregate overall PnL of sellers $50,217; their PnL on those tail sells $309,672.
+Sellers of cheap upper-tail YES: 25634 wallets; top 10 = 19.8% of that volume. Notional-weighted share of those sellers with positive overall PnL: 68.9%; weighted mean overall ROI 1.12%. Aggregate overall PnL of sellers $2,405,169; their PnL on those tail sells $6,213,171.
 
 | pseudonym | addr | tail-sell notional | tail PnL | overall PnL | overall ROI | events | class |
 |---|---|---|---|---|---|---|---|
-| Oddball-Deviance | 0x590e..e43d | 97,971 | 82,138 | 11,219 | 0.3% | 58 | market-maker-like |
-| Verifiable-Macaw | 0x1e1a..7690 | 19,685 | 19,685 | 7,966 | 0.7% | 24 | market-maker-like |
-| Courageous-Polish | 0xc4d5..87cf | 15,765 | 3,788 | 19,821 | 0.8% | 57 | market-maker-like |
-| Writhing-Rib | 0x2eb6..3e31 | 12,194 | 12,194 | 433 | 0.0% | 35 | market-maker-like |
-| Everlasting-Fit | 0x12ed..c9b4 | 11,736 | 9,092 | 7,024 | 1.2% | 55 | market-maker-like |
-| Secondary-Clogs | 0x74ff..be5b | 11,676 | -9,167 | -3,067 | -1.5% | 56 | market-maker-like |
-| Right-Simple | 0xfbcb..bb5d | 10,211 | 6,814 | 19,497 | 1.3% | 50 | market-maker-like |
-| Weird-Nylon | 0x6864..294b | 10,012 | 10,012 | -6,237 | -0.8% | 44 | market-maker-like |
-| Robust-Creature | 0x17f1..0528 | 9,465 | 5,465 | 5,278 | 3.9% | 54 | sharp |
-| Big-Personality | 0xbbdc..5d81 | 8,855 | 8,855 | 2,049 | 1.1% | 37 | other |
-|  | 0x849c..4009 | 8,628 | -3,223 | -1,903 | -1.0% | 45 | market-maker-like |
-| Best-Radish | 0x2924..dcde | 7,548 | 6,342 | -18,025 | -2.0% | 57 | market-maker-like |
-| Pertinent-Bronco | 0x6be9..3493 | 6,434 | -3,409 | 2,152 | 7.4% | 57 | other |
-| Secret-Neurobiologist | 0xb7fd..cc88 | 6,102 | 5,162 | 263 | 0.5% | 38 | sharp |
-| Fussy-Dad | 0xa59c..bb62 | 5,824 | 5,824 | 7,006 | 1.6% | 53 | market-maker-like |
+| Standard-Verification | 0x689a..779e | 252,150 | 251,828 | 605,513 | 3.6% | 108 | sharp |
+|  | 0x849c..4009 | 247,410 | 235,560 | 19,090 | 0.4% | 190 | market-maker-like |
+| Verifiable-Macaw | 0x1e1a..7690 | 147,760 | 147,760 | 68,580 | 1.5% | 101 | market-maker-like |
+| Oddball-Deviance | 0x590e..e43d | 134,580 | 118,747 | 20,403 | 0.4% | 95 | market-maker-like |
+| Awkward-Patriot | 0xe372..eb38 | 118,523 | 118,523 | 2,061 | 0.2% | 72 | sharp |
+| Courageous-Polish | 0xc4d5..87cf | 91,247 | 77,268 | 159,006 | 0.9% | 202 | market-maker-like |
+| Murky-Oversight | 0x8e9e..38e4 | 83,981 | 83,981 | 2,527 | 0.5% | 27 | sharp |
+| Right-Interferometer | 0x071d..07ef | 82,455 | 82,396 | 624 | 0.0% | 115 | market-maker-like |
+| Legal-Zucchini | 0xa459..7dd6 | 70,468 | 70,468 | 1,870 | 1.1% | 58 | sharp |
+| Robust-Creature | 0x17f1..0528 | 63,239 | 59,239 | 7,732 | 1.6% | 125 | market-maker-like |
+| Pertinent-Bronco | 0x6be9..3493 | 61,828 | 48,186 | 6,686 | 0.7% | 204 | other |
+| Gleeful-Bookmark | 0x1022..f0cf | 55,561 | 55,561 | -8,306 | -0.2% | 20 | market-maker-like |
+| Glass-Typewriter | 0xa49b..7054 | 54,450 | 53,472 | 57,031 | 5.4% | 189 | sharp |
+| Unhealthy-Bog | 0xcbbc..b5d0 | 51,714 | 51,714 | 103,728 | 18.7% | 28 | sharp |
+| Spirited-Motion | 0x70b6..aa2f | 51,219 | 51,149 | 790 | 0.0% | 49 | market-maker-like |
 
 ## Do profitable wallets buy or sell cheap tokens?
 
 | group | wallets | cheap-buy notional | cheap-sell notional | buy share of cheap notional |
 |---|---|---|---|---|
-| sharp | 1282 | 114,396 | 109,912 | 51% |
-| consistent loser | 273 | 84,207 | 27,268 | 76% |
-| market-maker-like | 111 | 677,321 | 595,558 | 53% |
-| one-off | 16780 | 37,825 | 19,749 | 66% |
-| other | 8075 | 692,010 | 338,768 | 67% |
-| profitable (>=5 ev) | 3928 | 866,479 | 680,836 | 56% |
-| unprofitable (>=5 ev) | 2994 | 660,745 | 372,444 | 64% |
+| sharp | 7132 | 3,435,187 | 3,021,441 | 53% |
+| consistent loser | 1339 | 738,253 | 464,784 | 61% |
+| market-maker-like | 1115 | 5,849,375 | 5,371,804 | 52% |
+| one-off | 113756 | 791,065 | 390,250 | 67% |
+| other | 55710 | 8,905,892 | 5,217,122 | 63% |
+| profitable (>=5 ev) | 24409 | 12,324,082 | 9,541,611 | 56% |
+| unprofitable (>=5 ev) | 17665 | 5,946,398 | 4,109,085 | 59% |
 
 ## Broader PnL via data-api (top 5 sharp by PnL)
 
-- Unsightly-Dilapidation 0xb0cc..f09b: /positions ok, 72 open positions, cashPnl sum $-3,004, realizedPnl sum $-245 (current positions only)
-- Slight-Campaign 0x7505..2978: /positions ok, 1 open positions, cashPnl sum $23, realizedPnl sum $0 (current positions only)
-- Careful-Bunch 0x122c..fbed: /positions ok, 500 open positions, cashPnl sum $-37,715, realizedPnl sum $-30,017 (current positions only)
--  0xf14e..6173: /positions ok, 6 open positions, cashPnl sum $-4,668, realizedPnl sum $-1,965 (current positions only)
-- Private-Patrolling 0x7789..a280: /positions ok, 30 open positions, cashPnl sum $-5,125, realizedPnl sum $1,306 (current positions only)
+- Standard-Verification 0x689a..779e: /positions ok, 0 open positions, cashPnl sum $0, realizedPnl sum $0 (current positions only)
+- Flamboyant-Disability 0x90ed..b5bc: /positions ok, 174 open positions, cashPnl sum $-178,138, realizedPnl sum $70,490 (current positions only)
+- Broken-Teriyaki 0xbb9c..072b: /positions ok, 7 open positions, cashPnl sum $-302, realizedPnl sum $15 (current positions only)
+- Unhealthy-Bog 0xcbbc..b5d0: /positions ok, 500 open positions, cashPnl sum $-106,523, realizedPnl sum $7,957 (current positions only)
+-  0x265f..a448: /positions ok, 74 open positions, cashPnl sum $-10,136, realizedPnl sum $122 (current positions only)

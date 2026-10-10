@@ -194,36 +194,55 @@ def main(limit_events=None):
 
 
 def build_outputs(sel_by_event, cache):
-    frames = []
+    """Stream per-event parquet files into trades_all.parquet (one row group per event),
+    so the full ~tens-of-millions-row tape never sits in memory at once."""
+    import pyarrow as pa
+    import pyarrow.parquet as pq
     cov = []
-    for slug, rows in sel_by_event.items():
+    writer = None
+    n_rows = 0
+    wallets = set()
+    events_written = 0
+    for slug in sorted(sel_by_event, key=lambda s: sel_by_event[s][0]["window_start_utc"]):
+        rows = sel_by_event[slug]
         p = os.path.join(RAW_TRADES, f"{slug}.parquet")
         if not os.path.exists(p):
             continue
         raw = pd.read_parquet(p)
         meta = {r["market_id"]: r for r in rows}
+        notional = 0.0
         if not raw.empty:
             raw["bucket_lo"] = raw["market_id"].map(lambda m: meta[m]["bucket_lo"])
             raw["bucket_hi"] = raw["market_id"].map(lambda m: meta[m]["bucket_hi"])
             raw["bucket_label"] = raw["market_id"].map(lambda m: meta[m]["bucket_label"])
-            raw["outcome_yes"] = raw["market_id"].map(lambda m: meta[m]["outcome_yes"])
+            raw["outcome_yes"] = pd.to_numeric(raw["market_id"].map(lambda m: meta[m]["outcome_yes"]),
+                                               errors="coerce")
             raw["event_slug"] = slug
             raw["family"] = rows[0]["family"]
             raw["window_start_utc"] = rows[0]["window_start_utc"]
             raw["window_end_utc"] = rows[0]["window_end_utc"]
-            frames.append(raw)
-        notional = float((raw["size"] * raw["price"]).sum()) if not raw.empty else 0.0
+            notional = float((raw["size"] * raw["price"]).sum())
+            wallets.update(raw["proxyWallet"].dropna().unique().tolist())
+            table = pa.Table.from_pandas(raw, preserve_index=False)
+            if writer is None:
+                writer = pq.ParquetWriter(ALL_PARQUET, table.schema)
+            else:
+                table = table.cast(writer.schema)
+            writer.write_table(table)
+            n_rows += len(raw)
+            events_written += 1
         gamma_vol = float(rows[0]["event_volume"]) if rows[0]["event_volume"] else float("nan")
         cov.append({
             "event_slug": slug, "family": rows[0]["family"], "window_start_utc": rows[0]["window_start_utc"],
             "n_markets": len(rows), "n_trades": len(raw), "notional_usd": round(notional, 2),
-            "gamma_volume": round(gamma_vol, 2), "ratio": round(notional / gamma_vol, 4) if gamma_vol else None,
+            "gamma_volume": round(gamma_vol, 2),
+            "ratio": round(notional / gamma_vol, 4) if gamma_vol == gamma_vol and gamma_vol else None,
         })
-    all_df = pd.concat(frames, ignore_index=True)
-    all_df["outcome_yes"] = pd.to_numeric(all_df["outcome_yes"], errors="coerce")
-    all_df.to_parquet(ALL_PARQUET, index=False)
+        del raw
+    if writer is not None:
+        writer.close()
     pd.DataFrame(cov).to_csv(COVERAGE_CSV, index=False)
-    return all_df, pd.DataFrame(cov)
+    return n_rows, len(wallets), events_written, pd.DataFrame(cov)
 
 
 def probe(sel):
@@ -287,7 +306,6 @@ if __name__ == "__main__":
         for r in sel:
             by_event.setdefault(r["event_slug"], []).append(r)
         cache = load_cache()
-    all_df, cov = build_outputs(by_event, cache)
-    print(f"trades_all rows={len(all_df)} unique wallets={all_df['proxyWallet'].nunique()} "
-          f"events={all_df['event_slug'].nunique()}", flush=True)
+    n_rows, n_wallets, n_events, cov = build_outputs(by_event, cache)
+    print(f"trades_all rows={n_rows} unique wallets={n_wallets} events={n_events}", flush=True)
     print(f"coverage written: {len(cov)} events", flush=True)
