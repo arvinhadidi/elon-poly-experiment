@@ -168,3 +168,12 @@ Sample (every ~N-th market):
 
 (filled in separately)
 
+
+## Reading note (added after review)
+- The "122 disagreements" above are almost all outside tracker coverage: 120 windows predate the post data (xtracker history starts Nov 2025), so the tracker count there is 0. **Inside coverage (windows from 2025-12-01) only 2 real mismatches remain, both archived "arch-" duplicate events** (arch-elon-musk-of-tweets-may-19-may-26, arch-...-may-18-may-20). Non-arch match rate: 210/212 → 100% excluding arch.
+- 562 markets with ≥2 "proposed" entries are the normal propose→confirm path, not disputes. 12 markets have a dispute entry; none changed the outcome.
+
+## Web search (2026-10-10)
+- No UMA dispute found that changed an Elon tweet-count outcome. Third-party Orrery pages show some May 2026 post-count markets as "proposed" with disputes (may lag).
+- No xtracker-specific outage reported publicly. General Polymarket halts: Aug 31 2026 trading API, June 2026 v2.6.x maintenance.
+- Rules: deleted posts count only if the tracker captured them (~5 min); X is the fallback resolution source.

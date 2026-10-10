@@ -1,2 +1,10 @@
 snapshot 0 2026-10-10T17:41:37Z: 90/108 buckets with a live book
 snapshot 1 2026-10-10T17:56:37Z: 90/108 buckets with a live book
+snapshot 2 2026-10-10T18:11:37Z: 84/108 buckets with a live book
+event_slug,n_snapshots,n_buckets_cheap_le50,ask_usd_1c_le50_mean,ask_usd_2c_le50_mean,median_spread_cheap,median_spread_mid,median_spread_expensive,n_buckets_live_last
+elon-musk-of-tweets-october-10-october-12-2026,3,10,1175,1883,0.0020,0.0100,,10
+elon-musk-of-tweets-october-12-october-14-2026,3,10,131,167,0.0280,0.1800,,10
+elon-musk-of-tweets-october-13-october-20-2026,3,26,1697,2576,0.0070,,,26
+elon-musk-of-tweets-october-6-october-13-2026,3,13,1765,2514,0.0020,0.0020,,13
+elon-musk-of-tweets-october-8-october-10-2026,2,6,179,200,,,,6
+elon-musk-of-tweets-october-9-october-16-2026,3,24,924,1503,0.0020,,,24
