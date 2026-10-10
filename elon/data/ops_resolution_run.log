@@ -1,0 +1,12 @@
+closed rows=6132 markets=6132 events=368
+uma_status counts over closed markets: [('resolved', 6125), ('proposed', 7)]
+  gamma fetched 500/6132
+  gamma fetched 1000/6132
+  gamma fetched 1500/6132
+  gamma fetched 2000/6132
+  gamma fetched 2500/6132
+  gamma fetched 3000/6132
+  gamma fetched 3500/6132
+  gamma fetched 4000/6132
+  gamma fetched 4500/6132
+  gamma fetched 5000/6132

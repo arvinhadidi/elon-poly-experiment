@@ -1,0 +1,3 @@
+rewards/markets/current: 18692 markets
+wrote data/ops_rewards.csv: 154 live markets, 36 in rewards/current
+fee combos (maker,taker,feeType): [(('1000', '1000', 'culture_fees'), 154)]
