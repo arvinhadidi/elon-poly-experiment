@@ -104,7 +104,7 @@ QA = [
  (A, "Where does it sit?", "Upper-tail buckets (+151%, p=0.02 vs +23% lower tail; falls to +23% at 1c). 5–15c best (+81%); &lt;2c dies at slippage. Leads 50–55% best, 90–95% lose."),
  (G, "As-known count used?", "Yes. Rebuilt with counts as known at the time; the look-ahead version differs by only $10–20."),
  (A, "Independent bets?", "86 events but only 44 non-overlapping weekly windows. Fri–Fri +59% (p=0.10), Tue–Tue +76% (p=0.05). 14-day block p: 0.018 / 0.09 / 0.28 at 0 / 0.5c / 1c."),
- (R, "Who trades?", "Pros are clearly present: top 50 wallets hold 54% of volume, ≈111 market-maker-like wallets carry 41% of notional, and they sell the cheap upper-tail YES we'd buy."),
+ (R, "Who trades?", "All 208 events, 179k wallets: top 50 hold 35% of volume and ≈1,100 market-maker-like wallets carry 36%. Crowd buyers of cheap upper-tail YES lost 95% of their stake; the model's selective upper-tail picks made +81% in the backtest. Pros sit on the other side."),
  (R, "Repricing speed?", "Fast, no latency edge. ≈88% of a burst is priced in before xtracker imports it. Buying after a burst returns −4%."),
  (R, "Is the lag shrinking?", "Yes, bots are here. Share priced in rose 0.60 → 0.80 → 0.93 across thirds of the sample; price/count correlation 0.13 → ≈0.5."),
  (A, "Related markets", "Inventory done: about 8 free tracker-settled weekly post-count families ($10–60k a week). Few good siblings; view-count markets have no free settlement data."),
