@@ -581,27 +581,30 @@ def venue_checks():
             except Exception as ex:  # noqa: BLE001
                 rows.append((0, tk, s_.get("title"), s_.get("frequency"), -1, -1, -1, f"fetch failed: {ex}"))
                 continue
+            try:
+                ev = get(KALSHI + "/events", params={"series_ticker": tk, "limit": 200}).get("events", []) or []
+            except Exception:  # noqa: BLE001
+                ev = []
             vol = sum(f(m.get("volume_fp"), 0.0) or 0.0 for m in mk)
-            # events = distinct event_ticker over markets; recent = those whose markets closed in last 90 days
-            all_ev = {m.get("event_ticker") for m in mk}
-            ev = [1] * len(all_ev)
+            closes = [iso(m.get("close_time") or "") for m in mk if m.get("close_time")]
             recent = len({m.get("event_ticker") for m in mk
-                          if (iso(m.get("close_time") or "") or NOW) >= cut and (iso(m.get("close_time") or "") is not None)})
+                          if m.get("close_time") and iso(m["close_time"]) >= cut})
+            last_close = max(closes).date().isoformat() if closes else "none"
             st = defaultdict(int)
             for m in mk:
                 st[m.get("status")] += 1
             rows.append((vol, tk, s_.get("title"), s_.get("frequency"), len(mk), len(ev), recent,
-                         ",".join(f"{k}:{v}" for k, v in sorted(st.items(), key=lambda kv: str(kv[0])))))
+                         f"last_close={last_close}; " + ",".join(f"{k}:{v}" for k, v in sorted(st.items(), key=lambda kv: str(kv[0])))))
         rows.sort(key=lambda r: -r[0])
         kal_md.append("- Kalshi table (sorted by contract volume; events_90d = events with close time in last 90 days):")
         kal_md.append("")
-        kal_md.append("| ticker | title | frequency | markets | events | events_90d | contracts_volume | status |")
+        kal_md.append("| ticker | title | frequency | markets | events | events_90d | contracts_volume | last close / status |")
         kal_md.append("|---|---|---|---|---|---|---|---|")
         for vol, tk, title, freq, nm, ne, rec, st in rows[:60]:
             kal_md.append(f"| {tk} | {title} | {freq} | {nm} | {ne} | {rec} | {vol:,.0f} | {st} |")
         (RAW_DIR / "kalshi_matches.json").write_text(json.dumps(
             [dict(ticker=r[1], title=r[2], frequency=r[3], markets=r[4], events=r[5], events_90d=r[6],
-                  contracts_volume=r[0]) for r in rows], indent=1))
+                  contracts_volume=r[0], status=r[7]) for r in rows], indent=1))
     except Exception as ex:  # noqa: BLE001
         kal_md.append(f"- Kalshi check failed: {ex}")
 
