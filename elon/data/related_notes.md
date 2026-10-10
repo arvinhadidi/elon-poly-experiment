@@ -1,6 +1,6 @@
 # Related count-market inventory: notes
 
-Generated 2026-10-10 17:35 UTC by elon/pull_related.py (read-only, no orders).
+Generated 2026-10-10 17:38 UTC by elon/pull_related.py (read-only, no orders).
 
 ## Polymarket method
 - Families = Gamma series whose titles are count-style (>=50% of event titles match MEDIA_RE), plus
@@ -14,22 +14,22 @@ Generated 2026-10-10 17:35 UTC by elon/pull_related.py (read-only, no orders).
 - data_free = y only when the xtracker posts endpoint returned posts for the last 30 days (free, no key).
 
 ## Open-event depth detail
-- elon-musk-of-tweets-october-6-october-13-2026: cheap buckets=13, depth within 2c=$2,536, median touch=$8
-- elon-musk-of-tweets-october-9-october-16-2026: cheap buckets=24, depth within 2c=$1,600, median touch=$6
-- elon-musk-of-tweets-october-10-october-12-2026: cheap buckets=10, depth within 2c=$1,129, median touch=$10
-- elon-musk-of-tweets-october-12-october-14-2026: cheap buckets=10, depth within 2c=$94, median touch=$2
-- elon-musk-of-tweets-october-2026: cheap buckets=24, depth within 2c=$672, median touch=$1
+- elon-musk-of-tweets-october-6-october-13-2026: cheap buckets=13, depth within 2c=$2,343, median touch=$18
+- elon-musk-of-tweets-october-9-october-16-2026: cheap buckets=24, depth within 2c=$1,615, median touch=$7
+- elon-musk-of-tweets-october-10-october-12-2026: cheap buckets=10, depth within 2c=$2,053, median touch=$10
+- elon-musk-of-tweets-october-12-october-14-2026: cheap buckets=10, depth within 2c=$170, median touch=$2
+- elon-musk-of-tweets-october-2026: cheap buckets=24, depth within 2c=$664, median touch=$1
 - what-will-elon-post-this-week-october-5-october-11: cheap buckets=1, depth within 2c=$3, median touch=$2
-- donald-trump-of-truth-social-posts-october-6-october-13-2026: cheap buckets=9, depth within 2c=$479, median touch=$2
-- donald-trump-of-truth-social-posts-october-9-october-16-2026: cheap buckets=10, depth within 2c=$486, median touch=$10
-- white-house-of-tweets-october-6-october-13-2026: cheap buckets=4, depth within 2c=$30, median touch=$0
+- donald-trump-of-truth-social-posts-october-6-october-13-2026: cheap buckets=9, depth within 2c=$374, median touch=$2
+- donald-trump-of-truth-social-posts-october-9-october-16-2026: cheap buckets=10, depth within 2c=$687, median touch=$10
+- white-house-of-tweets-october-6-october-13-2026: cheap buckets=4, depth within 2c=$28, median touch=$0
 - white-house-of-tweets-october-9-october-16-2026: cheap buckets=9, depth within 2c=$72, median touch=$0
 - khamenei-of-tweets-october-6-october-13-2026: cheap buckets=11, depth within 2c=$33, median touch=$0
 - khamenei-of-tweets-october-9-october-16-2026: cheap buckets=11, depth within 2c=$33, median touch=$1
 - of-views-of-next-mrbeast-video-on-week-1-20261003: cheap buckets=6, depth within 2c=$232, median touch=$15
-- of-views-of-next-mrbeast-video-on-week-1-higher-brackets-20261004: cheap buckets=5, depth within 2c=$211, median touch=$1
-- of-views-of-next-mrbeast-gaming-video-on-day-1-20261010: cheap buckets=7, depth within 2c=$117, median touch=$5
-- of-views-of-mrbeast-gaming-video-week-1-20261010: cheap buckets=8, depth within 2c=$270, median touch=$5
+- of-views-of-next-mrbeast-video-on-week-1-higher-brackets-20261004: cheap buckets=5, depth within 2c=$217, median touch=$1
+- of-views-of-next-mrbeast-gaming-video-on-day-1-20261010: cheap buckets=7, depth within 2c=$139, median touch=$3
+- of-views-of-mrbeast-gaming-video-week-1-20261010: cheap buckets=8, depth within 2c=$152, median touch=$5
 - will-mrbeast-hit-million-subscribers-by-october-31-2026: cheap buckets=1, depth within 2c=$4, median touch=$4
 - will-mrbeast-hit-billion-views-by-october-31-2026: cheap buckets=1, depth within 2c=$503, median touch=$3
 - what-will-trump-say-this-week-october-5-october-11-20261011: cheap buckets=1, depth within 2c=$18, median touch=$17
@@ -40,84 +40,98 @@ Generated 2026-10-10 17:35 UTC by elon/pull_related.py (read-only, no orders).
 - nyc-mayor-of-tweets-october-6-october-13-2026: cheap buckets=10, depth within 2c=$45, median touch=$1
 - nyc-mayor-of-tweets-october-9-october-16-2026: cheap buckets=10, depth within 2c=$22, median touch=$0
 - zelenskyy-of-tweets-october-6-october-13-2026: cheap buckets=10, depth within 2c=$124, median touch=$4
-- zelenskyy-of-tweets-october-9-october-16-2026: cheap buckets=10, depth within 2c=$217, median touch=$1
-- what-will-mrbeast-say-during-his-next-gaming-youtube-video-20261006222126545: cheap buckets=10, depth within 2c=$217, median touch=$0
+- zelenskyy-of-tweets-october-9-october-16-2026: cheap buckets=10, depth within 2c=$126, median touch=$1
+- what-will-mrbeast-say-during-his-next-gaming-youtube-video-20261006222126545: cheap buckets=10, depth within 2c=$277, median touch=$0
 - what-will-dominos-say-during-their-next-earnings-call-october-13: cheap buckets=6, depth within 2c=$74, median touch=$9
 - what-will-jpmorgan-say-during-their-next-earnings-call-october-13: cheap buckets=5, depth within 2c=$77, median touch=$16
-- how-many-views-will-the-1-movie-on-netflix-have-this-week-negrisk-20261013: cheap buckets=6, depth within 2c=$123, median touch=$9
-- how-many-views-will-the-1-show-on-netflix-have-this-week-negrisk-20261013: cheap buckets=5, depth within 2c=$73, median touch=$3
+- how-many-views-will-the-1-movie-on-netflix-have-this-week-negrisk-20261013: cheap buckets=6, depth within 2c=$122, median touch=$8
+- how-many-views-will-the-1-show-on-netflix-have-this-week-negrisk-20261013: cheap buckets=5, depth within 2c=$85, median touch=$3
 - what-companies-will-trump-mention-in-october: cheap buckets=4, depth within 2c=$123, median touch=$30
-- will-elon-musk-tweet-about-hyperliquid-by: cheap buckets=3, depth within 2c=$299, median touch=$61
+- will-elon-musk-tweet-about-hyperliquid-by: cheap buckets=3, depth within 2c=$269, median touch=$54
 
 ## Kalshi (signal only, cannot trade)
-- Kalshi series listed: 14935; title/ticker matches: 582
-  - KXMAHERMENTION | Bill Maher Mention | markets=0 status={} contracts_volume=0
-  - KXEARNINGSMENTIONUBER | uber earnings mention | markets=20 status={'finalized': 20} contracts_volume=0
-  - KXPERSONMENTION | General | markets=104 status={'finalized': 70, 'closed': 34} contracts_volume=0
-  - KXMINAJCOUNTSZA | How many times will nicki minaj tweet about sza | markets=0 status={} contracts_volume=0
-  - KXSCHUMERMENTION | Schumer Mention | markets=0 status={} contracts_volume=0
-  - KXMENTIONEARNOKLO | Oklo | markets=0 status={} contracts_volume=0
-  - KXZMMENTION | Zoom Mention | markets=15 status={'active': 15} contracts_volume=0
-  - KXTCRUMENTION | Ted Cruz mentions | markets=13 status={'finalized': 13} contracts_volume=0
-  - KXWARSHMENTION | Kevin Warsh Mention | markets=29 status={'finalized': 29} contracts_volume=0
-  - KXCFBMENTION | CFB | markets=0 status={} contracts_volume=0
-  - KXNHLMENTION | NHL Announcer Mentions | markets=0 status={} contracts_volume=0
-  - KXTAXAPP | Elon tax app | markets=0 status={} contracts_volume=0
-  - KXEARNINGSMENTIONMDT | Medtronic Earnings Call | markets=11 status={'finalized': 11} contracts_volume=0
-  - KXEARNINGSMENTIONTLN | Talen Energy Earnings Call | markets=12 status={'finalized': 12} contracts_volume=0
-  - KXDROZMENTION | Dr Oz Mention | markets=27 status={'finalized': 27} contracts_volume=0
-  - KXMENTIONEARNGIS | General Mills | markets=0 status={} contracts_volume=0
-  - KXSURVIVORMENTION | Survivor Mention | markets=0 status={} contracts_volume=0
-  - KXLEBRONMENTION | Lebron James Mention | markets=0 status={} contracts_volume=0
-  - KXGABBMENTION | Greg Abbott mentions | markets=13 status={'finalized': 13} contracts_volume=0
-  - KXDEPORTMUSK | dm | markets=0 status={} contracts_volume=0
-  - KXGOLDENMENTION | Golden Bachelor Mention | markets=0 status={} contracts_volume=0
-  - KXWATSONRNC | Will the Supreme Court prohibit states from counting post-Election Day mail ballots? | markets=0 status={} contracts_volume=0
-  - KXHILTONMENTION | Steve Hilton Mention | markets=0 status={} contracts_volume=0
-  - KXMMMENTION | What will the announcers say during the March Madness game? | markets=0 status={} contracts_volume=0
-  - KXHILLARYMENTION | Hillary Clinton Mention | markets=15 status={'finalized': 15} contracts_volume=0
-  - KXELONMENTION | Elon Mention | markets=18 status={'finalized': 18} contracts_volume=0
-  - KXLAMMYMENTION | David Lammy | markets=0 status={} contracts_volume=0
-  - KXEARNINGSMENTIONAAP | Advance Auto Parts Earnings Call | markets=12 status={'finalized': 12} contracts_volume=0
-  - KXMUSKPRIMARY | Musk primarying | markets=5 status={'active': 5} contracts_volume=0
-  - KXDRAKEMENTION | Drake Mentions | markets=0 status={} contracts_volume=0
-  - KXEARNINGSMENTIONRACE | Ferrari Earnings Call | markets=0 status={} contracts_volume=0
-  - KXMENTIONEARNDAL | Delta Earnings | markets=0 status={} contracts_volume=0
-  - KXLEAVITTSMFMENTION | What will Karoline Leavitt say on Sunday Morning Futures? | markets=0 status={} contracts_volume=0
-  - KXTSLAMENTION | Tesla Mention | markets=17 status={'finalized': 17} contracts_volume=0
-  - KXEARNINGSMENTIONPSKY | Paramount | markets=12 status={'active': 12} contracts_volume=0
-  - KXEARNINGSMENTIONURBN | Urban Outfitters Earnings Call | markets=14 status={'finalized': 14} contracts_volume=0
-  - KXDAILYGUESTMUSK | Musk on the Daily Show | markets=0 status={} contracts_volume=0
-  - KXUNMENTION | UN  | markets=0 status={} contracts_volume=0
-  - KXTRUMPREINER | Will Trump delete his Rob Reiner post? | markets=0 status={} contracts_volume=0
-  - KXLATENIGHTMENTION | Late Night Mention | markets=0 status={} contracts_volume=0
+- Kalshi series listed: 14,935; title/ticker matches (tweet/post/truth/views/mention/MrBeast/YouTube/Elon): 254
+- Kalshi table (sorted by contract volume; events_90d = events with close time in last 90 days):
+
+| ticker | title | frequency | markets | events | events_90d | contracts_volume | status |
+|---|---|---|---|---|---|---|---|
+| KXWORLDNEWSMENTION | World News Mention | one_off | 757 | 66 | 0 | 6,082,256 | finalized:757 |
+| KXTRUMPMENTIONB | Trump Mention B | one_off | 423 | 112 | 0 | 5,574,845 | finalized:423 |
+| KXTRUTHSOCIAL | Number of Trump Truth Social posts this week? | weekly | 110 | 36 | 0 | 2,788,776 | active:10,finalized:90,initialized:10 |
+| KXYTVIEWSHIGH | highest daily views in time period | monthly | 573 | 40 | 0 | 2,277,349 | active:104,finalized:469 |
+| KXYTVIEWSW | Highest daily view count this week | weekly | 1000 | 126 | 0 | 2,043,894 | active:244,finalized:756 |
+| KXTRUMPSAYCOMPANY | Will Trump mention company | one_off | 129 | 4 | 0 | 1,200,910 | active:41,finalized:88 |
+| KXFEDMENTION | Fed mention | custom | 96 | 15 | 0 | 814,648 | active:47,finalized:49 |
+| KXPSAKIMENTION | Jen Psaki Mention | one_off | 200 | 45 | 0 | 679,328 | closed:11,finalized:189 |
+| KXHEARINGMENTION | Hearing Mention | one_off | 49 | 53 | 0 | 614,816 | finalized:49 |
+| KXNETFLIXTOPVIEWSTV | NETFLIX TOP SHOW VIEW COUNT | one_off | 121 | 41 | 0 | 568,966 | active:11,finalized:110 |
+| KXNETFLIXTOPVIEWSMOVIE | NETFLIX TOP MOVIE VIEW COUNT | one_off | 121 | 40 | 0 | 527,641 | active:11,finalized:110 |
+| KXDEBATEMENTION | Debate Mentions | one_off | 242 | 15 | 0 | 488,077 | active:42,finalized:200 |
+| KXSECPRESSMENTION | Sec Press mentions | custom | 45 | 62 | 0 | 478,058 | closed:15,finalized:30 |
+| KXMELANIAMENTION | Melania Mention | one_off | 55 | 18 | 0 | 381,802 | finalized:55 |
+| KXFNSMENTION | Fox News Sunday Mention | one_off | 90 | 11 | 0 | 364,655 | finalized:90 |
+| KXMRBEASTMENTION | What Will Mr Beast say in his next video | one_off | 13 | 27 | 0 | 272,222 | finalized:13 |
+| KXWARSHMENTION | Kevin Warsh Mention | one_off | 29 | 4 | 0 | 269,656 | finalized:29 |
+| KXEARNINGSMENTIONNVDA | NVDA Earnings Mention | one_off | 38 | 8 | 0 | 262,856 | active:19,finalized:19 |
+| KXFOXSATMENTION | Saturday in America Mention | one_off | 44 | 3 | 0 | 177,889 | finalized:44 |
+| KXYTTOPSONGW | youtube weekly top songs | one_off | 166 | 11 | 0 | 155,392 | closed:15,finalized:136,initialized:15 |
+| KXTRUTHSOCIALD | Number of Trump Truth Social posts today? | one_off | 80 | 10 | 0 | 153,278 | active:8,finalized:72 |
+| KXNETANYAHUMENTION | Netanyahu Mention | one_off | 36 | 8 | 0 | 146,456 | finalized:36 |
+| KXWALLERMENTION | Waller Mention | one_off | 48 | 7 | 0 | 144,656 | finalized:48 |
+| KXMUSKNW | Elon Musk net worth on [date] | monthly | 49 | 8 | 0 | 136,620 | active:21,finalized:28 |
+| KXELONMENTION | Elon Mention | one_off | 18 | 1 | 0 | 136,422 | finalized:18 |
+| KXBOWMANMENTION | Michelle Bowman Mention | one_off | 43 | 3 | 0 | 123,212 | finalized:43 |
+| KXELONMARS | Elon Mars | custom | 1 | 1 | 0 | 119,806 | active:1 |
+| KXEARNINGSMENTIONUBER | uber earnings mention | one_off | 20 | 6 | 0 | 111,570 | finalized:20 |
+| KXZELENSKYYMENTION | Zelenskyy Mention | one_off | 15 | 3 | 0 | 103,106 | finalized:15 |
+| KXKHANNAMENTION | Ro Khanna Mention | one_off | 58 | 8 | 0 | 102,658 | finalized:58 |
+| KXTRUMPSAYCOUNTRY | Will Trump mention country | one_off | 81 | 2 | 0 | 92,058 | active:25,finalized:56 |
+| KXAOCMENTION | AOC Mention | one_off | 34 | 9 | 0 | 89,674 | finalized:34 |
+| KXBURNHAMMENTION | Andy Burnham mention | one_off | 55 | 4 | 0 | 83,687 | active:15,finalized:40 |
+| KXTBLAMENTION | Todd Blanche mentions | one_off | 36 | 2 | 0 | 66,094 | finalized:36 |
+| KXTSLAMENTION | Tesla Mention | one_off | 17 | 1 | 0 | 64,873 | finalized:17 |
+| KXJENSENMENTION | Jensen Mention | one_off | 20 | 6 | 0 | 61,337 | finalized:20 |
+| KXJOHNSONMENTION | Mike Johnson Mention | one_off | 28 | 8 | 0 | 56,648 | finalized:28 |
+| KXSPOTMENTION | Spotify Mention | one_off | 17 | 1 | 0 | 50,436 | finalized:17 |
+| KXWMTMENTION | Walmart Mention | one_off | 15 | 1 | 0 | 46,294 | finalized:15 |
+| KXEARNINGSMENTIONAAPL | Apple earnings mention | one_off | 17 | 7 | 0 | 46,244 | active:17 |
+| KXEARNINGSMENTIONAMZN | Amazon earnings mention | one_off | 22 | 7 | 0 | 45,164 | active:22 |
+| KXRDDTMENTION | Reddit Mention | one_off | 17 | 1 | 0 | 44,533 | finalized:17 |
+| KXDROZMENTION | Dr Oz Mention | one_off | 27 | 3 | 0 | 42,690 | finalized:27 |
+| KXNVDAMENTION | NVIDIA Mention | one_off | 44 | 2 | 0 | 40,253 | active:23,finalized:21 |
+| KXGOOGLMENTION | Google Mention | one_off | 16 | 1 | 0 | 39,437 | finalized:16 |
+| KXEARNINGSMENTIONBAC | Bank of America Earnings Mention | one_off | 15 | 5 | 0 | 36,770 | active:15 |
+| KXIMFTWEETS | IMF tweets | weekly | 42 | 12 | 0 | 36,001 | finalized:42 |
+| KXBAMENTION | Boeing Mention | one_off | 15 | 1 | 0 | 35,600 | finalized:15 |
+| KXABNBMENTION | Airbnb Mention | one_off | 15 | 1 | 0 | 34,020 | finalized:15 |
+| KXYTUBESUBSBEAST | YouTube subs Beast | custom | 2 | 4 | 0 | 32,904 | active:2 |
+| KXFIGMENTION | Figma Mention | one_off | 13 | 1 | 0 | 31,492 | finalized:13 |
+| KXALUNMENTION | Anna Paulina Luna mentions | one_off | 14 | 1 | 0 | 30,448 | finalized:14 |
+| KXVZMENTION | Verizon Mention | one_off | 14 | 1 | 0 | 30,424 | finalized:14 |
+| KXWDAYMENTION | Workday Mention | one_off | 14 | 1 | 0 | 29,611 | active:14 |
+| KXEARNINGSMENTIONUAL | United Airlines Earnings Mention | one_off | 15 | 5 | 0 | 27,404 | active:15 |
+| KXACTORELONMUSK | ELON MUSK IN WHAT MOVIE | one_off | 1 | 1 | 0 | 27,257 | active:1 |
+| KXSPCXMENTION | SpaceX Mention | one_off | 22 | 1 | 0 | 26,961 | finalized:22 |
+| KXMCDMENTION | McDonald's Mention | one_off | 17 | 1 | 0 | 24,715 | finalized:17 |
+| KXTRUMPTIME | Will Trump post this hour? | one_off | 15 | 19 | 0 | 24,427 | finalized:15 |
+| KXALTMANMENTION | Sam Altman Mention | one_off | 17 | 4 | 0 | 24,262 | finalized:17 |
 
 ## Manifold and other venues
-- Manifold search: 617 unique markets across 9 terms; 537 match elon/musk/tweet/post/truth/views/mention/mrbeast.
-  - Will this Yudkowsky tweet on AI video generation hold up in 2024? | vol=1,107,178 resolved=True close=2024-12-31 | https://manifold.markets/GeorgeVii/will-this-yudkowsky-tweet-hold-up-2
-  - Donald Trump's return on Twitter:  Will @realDonaldTrump tweet in 2023? | vol=754,995 resolved=True close=2023-08-25 | https://manifold.markets/itsTomekK/will-realdonaldtrump-tweet-in-2023
-  - Will this Yudkowsky tweet hold up? | vol=672,861 resolved=True close=2026-05-12 | https://manifold.markets/journcy/will-this-yudkowsky-tweet-hold-up
-  - Will Eliezer Yudkowsky write a tweet containing the word "rationalussy" by the end of 2023? | vol=639,173 resolved=True close=2024-01-02 | https://manifold.markets/SG/will-eliezer-yudkowsky-write-a-twee
-  - Donald Trump's return on Twitter: Will @realDonaldTrump tweet in 2022? | vol=627,573 resolved=True close=2022-12-31 | https://manifold.markets/itsTomekK/will-realdonaldtrump-tweet-in-2022
-  - 21. Will Donald Trump make at least one tweet in 2023? | vol=461,562 resolved=True close=2023-08-25 | https://manifold.markets/ACXBot/21-will-donald-trump-make-at-least
-  - Good Tweet or Bad Tweet? Which controversial posts will Manifold think are a "Good Take" this week? | vol=400,669 resolved=True close=2024-11-02 | https://manifold.markets/Joshua/good-tweet-or-bad-tweet-which-contr
-  - Will Donald Trump tweet once in 2023? | vol=261,649 resolved=True close=2023-08-26 | https://manifold.markets/CP/will-donald-trump-tweet-once-in-202
-  - Which Tweet will win the "Worst Tweets of 2023" bracket? | vol=141,883 resolved=True close=2023-12-17 | https://manifold.markets/jgyou/which-tweet-will-win-the-worst-twee
-  - Will @inerati tweet the word "rationalussy" (and keep the tweet up for at least a day) by the end of August leagues? | vol=138,604 resolved=True close=2023-09-02 | https://manifold.markets/Sketchy/will-inerati-tweet-the-word-rationa
-  - Will Sam Altman's next Tweet be an announcement of GPT-5? | vol=123,557 resolved=True close=2024-03-17 | https://manifold.markets/jim/will-sam-altmans-next-tweet-be-an-a
-  - Will Elon Musk tweet about Manifold in 2023? | vol=120,105 resolved=True close=2024-01-01 | https://manifold.markets/SG/will-elon-musk-tweet-about-manifold-5df47cac45fe
-  - Will @realDonaldTrump tweet in 2024? | vol=117,987 resolved=True close=2024-08-13 | https://manifold.markets/justifieduseofFallibilism/will-realdonaldtrump-tweet-in-2024
-  - Will Eliezer Yudkowsky be mentioned or quoted in the White House briefing room within 5 years? | vol=115,369 resolved=False close=2029-06-01 | https://manifold.markets/ZviMowshowitz/will-eliezer-yudkowsky-be-mentioned
-  - Will David Pakman have more YouTube video views in February compared to January? | vol=111,615 resolved=True close=2025-03-01 | https://manifold.markets/SirSalty/will-david-pakman-have-more-youtube
-  - Will xAI open source Grok within a month, before the end of Apr 11? (Musk tweeted) | vol=111,263 resolved=True close=2024-03-17 | https://manifold.markets/jacksonpolack/will-xai-open-source-grok-within-a
-  - What topics or who will Elon Musk tweet about on X before May 1st? | vol=108,498 resolved=True close=2024-05-02 | https://manifold.markets/Lion/what-topics-or-who-will-elon-musk-t
-  - Will any of the videos uploaded to Mark Rober's YouTube channel in Mar 2024 surpass 30M views? | vol=106,988 resolved=True close=2024-04-01 | https://manifold.markets/AmmonLam/will-any-of-the-videos-uploaded-to-b68e48553ae1
-  - Will xAI open source Grok within a week, before the end of March 17? (Musk tweeted) | vol=102,438 resolved=True close=2024-03-17 | https://manifold.markets/jacksonpolack/musk-this-week-xai-will-open-source
+- Manifold search: 794 unique markets across 11 terms; 24 are count-style (how many / # of / surpass / N tweets) about Elon, Trump, MrBeast, Zelenskyy, Khamenei, WH, Cruz, NYC Mayor, CZ or Tate.
   - Will any of the videos uploaded to Mr Beast's YouTube channel in Feb 2024 surpass 170M views? | vol=96,966 resolved=True close=2024-03-01 | https://manifold.markets/AmmonLam/will-any-of-the-videos-uploaded-to-376da6358d53
-  - Will any of the videos uploaded to Rational Animation's YouTube channel in Feb 2024 surpass 200k views? | vol=93,447 resolved=True close=2024-03-01 | https://manifold.markets/AmmonLam/will-any-of-the-videos-uploaded-to-a029fb738be8
   - Will any of the videos uploaded to Mr Beast's YouTube channel in Feb 2024 surpass 150M views? | vol=93,365 resolved=True close=2024-03-01 | https://manifold.markets/AmmonLam/will-any-of-the-videos-uploaded-to-74daff438d86
   - Will Donald Trump make at least three tweets in 2023? | vol=92,966 resolved=True close=2023-12-31 | https://manifold.markets/kian_spire/will-donald-trump-make-at-least-thr
-  - Will any of the videos uploaded to Destiny's YouTube channel in Mar 2024 surpass 800k views? | vol=72,300 resolved=True close=2024-03-29 | https://manifold.markets/AmmonLam/will-any-of-the-videos-uploaded-to-8f66bdb4ccde
-  - Will Trump tweet again before Sept 1st, 2023? | vol=70,636 resolved=True close=2023-09-01 | https://manifold.markets/ken/will-trump-tweet-again-before-sept
+  - If MrBeast posts 4 full videos on twitter before the end of June 2024, how many Tweet "views" will the fourth get? | vol=12,229 resolved=True close=2024-02-26 | https://manifold.markets/jacksonpolack/if-mrbeast-posts-4-full-videos-on-t
+  - How many YouTube views will Don Lemon's interview with Elon Musk receive within 1 week?🎙️📈 | vol=11,464 resolved=True close=2024-03-24 | https://manifold.markets/kanha/how-many-youtube-views-will-don-lem
+  - Will Elon Musk successfully defeat at least 5 Republicans in 2026? | vol=11,215 resolved=False close=2026-11-11 | https://manifold.markets/nikki/will-elon-musk-successfully-defeat
+  - # of views of next MrBeast video on day 1? [Polymarket] | vol=10,979 resolved=True close=2025-08-31 | https://manifold.markets/bag3lfan/-of-views-of-next-mrbeast-video-on-tzRAcSus5E
+  - Will Donald Trump (@realDonaldTrump) post at least 1 time on X/Twitter in 2024? | vol=8,854 resolved=True close=2024-08-12 | https://manifold.markets/kurt/will-donald-trump-realdonaldtrump-p
+  - Elon Musk # of tweets Feb 28 - Mar 7? | vol=6,093 resolved=True close=2025-03-08 | https://manifold.markets/MaxZORuL/elon-musk-of-tweets-feb-28-mar-7
+  - How many people will repost this tweet by Mr. Beast, at the end of 72 hours? | vol=5,979 resolved=True close=2024-01-25 | https://manifold.markets/Tetraspace/how-many-people-will-repost-this-tw
+  - Will MrBeast surpass 37,500,000,000 total views by the end of 2023? | vol=4,609 resolved=True close=2023-11-27 | https://manifold.markets/NickDaTick/will-mrbeast-surpass-37500000000-to
+  - how many people will Donald Trump insult in his July 4th social post(s)? [short fuse] | vol=3,641 resolved=True close=2025-07-04 | https://manifold.markets/shankypanky/how-many-people-will-donald-trump-i
+  - How many times will Donald Trump tweet (post on X) before November 5, 2024? | vol=3,030 resolved=True close=2024-09-07 | https://manifold.markets/mikeangelo/how-many-times-will-donald-trump-tw
+  - # of views of next MrBeast video on day 1? [Polymarket] | vol=2,788 resolved=True close=2025-08-16 | https://manifold.markets/bag3lfan/-of-views-of-next-mrbeast-video-on
+  - Will any of the videos uploaded to Mr Beast's YouTube channel in Apr 2024 surpass 150M views? | vol=2,653 resolved=True close=2024-05-01 | https://manifold.markets/AmmonLam/will-any-of-the-videos-uploaded-to-aabc94c2b989
 
-Runtime: 133s
+Runtime: 541s

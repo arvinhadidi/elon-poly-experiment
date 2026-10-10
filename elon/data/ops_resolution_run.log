@@ -10,3 +10,6 @@ uma_status counts over closed markets: [('resolved', 6125), ('proposed', 7)]
   gamma fetched 4000/6132
   gamma fetched 4500/6132
   gamma fetched 5000/6132
+  gamma fetched 5500/6132
+  gamma fetched 6000/6132
+wrote data/ops_resolution.md; nonplain markets=7 events=1 multi_proposed=562 dispute=12 gamma_mismatch=0 tracker_disagree=122/368

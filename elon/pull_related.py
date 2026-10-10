@@ -578,16 +578,15 @@ def venue_checks():
             tk = s_.get("ticker")
             try:
                 mk = get(KALSHI + "/markets", params={"series_ticker": tk, "limit": 1000}).get("markets", []) or []
-                ev = get(KALSHI + "/events", params={"series_ticker": tk, "limit": 200}).get("events", []) or []
             except Exception as ex:  # noqa: BLE001
                 rows.append((0, tk, s_.get("title"), s_.get("frequency"), -1, -1, -1, f"fetch failed: {ex}"))
                 continue
             vol = sum(f(m.get("volume_fp"), 0.0) or 0.0 for m in mk)
-            recent = 0
-            for e in ev:
-                ct = iso(e.get("close_time") or e.get("expected_expiration_time") or "")
-                if ct and ct >= cut:
-                    recent += 1
+            # events = distinct event_ticker over markets; recent = those whose markets closed in last 90 days
+            all_ev = {m.get("event_ticker") for m in mk}
+            ev = [1] * len(all_ev)
+            recent = len({m.get("event_ticker") for m in mk
+                          if (iso(m.get("close_time") or "") or NOW) >= cut and (iso(m.get("close_time") or "") is not None)})
             st = defaultdict(int)
             for m in mk:
                 st[m.get("status")] += 1
