@@ -1,0 +1,78 @@
+{
+  "discovered_series": [
+    {
+      "id": "10000",
+      "slug": "elon-tweets",
+      "title": "Elon Tweets",
+      "recurrence": "weekly",
+      "active": true,
+      "closed": false,
+      "event_counts": {
+        "closed=true": 185,
+        "closed=false": 3
+      },
+      "discovered_via": [
+        "seed-or-search",
+        "series-list-title"
+      ]
+    },
+    {
+      "id": "10181",
+      "slug": "elon-tweet-daily",
+      "title": "elon tweet daily",
+      "recurrence": "daily",
+      "active": true,
+      "closed": false,
+      "event_counts": {
+        "closed=true": 46,
+        "closed=false": 1
+      },
+      "discovered_via": [
+        "seed-or-search"
+      ]
+    },
+    {
+      "id": "10816",
+      "slug": "elon-tweets-48h",
+      "title": "Elon Tweets 48H",
+      "recurrence": "daily",
+      "active": true,
+      "closed": false,
+      "event_counts": {
+        "closed=true": 121,
+        "closed=false": 3
+      },
+      "discovered_via": [
+        "seed-or-search",
+        "series-list-title"
+      ]
+    }
+  ],
+  "orphan_events_included": [
+    "of-elon-musk-tweets-between-january-10-16",
+    "of-elon-musk-tweets-between-may-3-and-may-10",
+    "of-elon-musk-tweets-between-may-10-and-may-17",
+    "of-elon-musk-tweets-between-may-17-and-may-24",
+    "of-elon-musk-tweets-between-may-24-and-may-31",
+    "elon-musk-number-of-tweets-25-times-thursday",
+    "how-many-times-will-elon-musk-tweet-between-april-26-and-may-3",
+    "elon-musk-of-tweets-january-3-10-continued",
+    "elon-musk-of-tweets-nov-22-29",
+    "elon-musk-of-tweets-nov-8-15",
+    "elon-musk-of-tweets-in-september",
+    "elon-musk-of-tweets-nov-15-22",
+    "elon-musk-of-tweets-january-10-17-25-strikes",
+    "elon-musk-of-tweets-august-23-30",
+    "elon-musk-of-tweets-january-24-31-lower-options",
+    "elon-musk-of-tweets-july-26-aug-2"
+  ],
+  "orphan_events_excluded": [
+    "adrian-dittmann-of-tweets-january-3-10",
+    "time-person-of-the-year-2026",
+    "1-searched-person-on-google-this-year-20260717214320563",
+    "2-searched-person-on-google-this-year-20260914",
+    "1-searched-person-on-google-in-the-us-2026-20260730192940",
+    "will-elon-musk-get-full-custody-of-the-st-clair-child",
+    "elon-musk-out-as-project-meridian-co-lead-by-january-27"
+  ]
+}
